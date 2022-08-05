@@ -6,17 +6,20 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class User {
-
     @Email (message = "Not a valid email.")
     private String email;
 
+    @Size(max = 30, message = "Username must be less than 30 characters.")
     @NotBlank (message = "Username must not be empty.")
     private String username;
 
+    @Size(max = 128, message = "Password must be less than 128 characters, how do you even have that long of a password?")
     @NotBlank (message = "Password must not be empty.")
     private String password;
 
