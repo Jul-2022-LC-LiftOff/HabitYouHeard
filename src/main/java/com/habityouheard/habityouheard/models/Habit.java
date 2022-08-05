@@ -25,7 +25,7 @@ public class Habit {
 
     private int pointValue;
 
-    @OneToMany
+    @OneToMany(mappedBy= "habit")
     private List<HabitMeta> habitMetaList = new ArrayList<>();
 
     @ManyToOne
@@ -35,14 +35,19 @@ public class Habit {
     @GeneratedValue
     private int id;
 
+    private int streak;
+
     public Habit(){}
 
-    public Habit(String name, String description, List<String> selectedDays, int pointValue, List<HabitMeta> habitMetaList) {
+
+
+    public Habit(String name, String description, List<String> selectedDays, int pointValue, List<HabitMeta> habitMetaList, int streak) {
         this.name = name;
         this.description = description;
         this.selectedDays = selectedDays;
         this.pointValue = pointValue;
         this.habitMetaList = habitMetaList;
+        this.streak = streak;
     }
 
     public String getName() {
@@ -80,4 +85,20 @@ public class Habit {
     public List<HabitMeta> getHabitMetaList() {
         return habitMetaList;
     }
+
+    public int getStreak() {
+        return streak;
+    }
+
+    public void updateStreak(boolean completedHabit) {
+        if (completedHabit) {
+            streak++;
+        }
+        else {
+            streak = 0;
+        }
+    }
+    //TODO 1: add updatePointsMethods()
+    //TODO 2: add job(s)
+
 }
