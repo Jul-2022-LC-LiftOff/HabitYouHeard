@@ -2,6 +2,7 @@ package com.habityouheard.habityouheard.models;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,7 +10,7 @@ import java.util.List;
 
 @Entity
 public class Habit {
-
+    
     @Id
     @GeneratedValue
     private int id;
@@ -21,7 +22,9 @@ public class Habit {
     @Size(max = 512, message = "Description must be less than 512 characters.")
     private String description;
 
-    @NotBlank(message = "At least one day must be selected.")
+    //Element Collection used here to solve : "Caused by: org.hibernate.MappingException: Could not determine type for: java.util.List, at table: habit, for columns: [org.hibernate.mapping.Column(selected_days)]"
+    @ElementCollection
+    @NotEmpty(message = "At least one day must be selected.")
     private List<String> selectedDays = new ArrayList<>();
 
     //Todo: add Group object
