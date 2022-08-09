@@ -10,6 +10,10 @@ import java.util.List;
 @Entity
 public class SupportGroup {
 
+    @Id
+    @GeneratedValue
+    private int id;
+
     @Size(max = 30, message = "Must be less than 30 characters.")
     @NotBlank (message = "Enter a Group Name.")
     private String name;
@@ -20,11 +24,7 @@ public class SupportGroup {
     @NotBlank(message = "Enter the Url of a image to use as the Group emblem")
     private String emblemURL;
 
-    @Id
-    @GeneratedValue
-    private int id;
-
-    //TODO: HALP mapping//
+    //TODO:Mapping//
     @OneToMany(mappedBy = "supportGroup")
     private User user;
 
