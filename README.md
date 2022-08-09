@@ -19,23 +19,24 @@ Download MySQL Workbench This project uses version 8.
 
 Navigate to MySQL Workbench
 
-Open up Local instance 3306 connection or add a new one. 
+-Open up Local instance 3306 connection or add a new one. 
 
 Each step here is very important that it is followed to the letter. If there is any issue with any of these steps, please let us know immediately so that we can fix them.
 
 Note: When quotation marks are used (like around “habityouheard”) the quotation marks should not be included in what you type in.
 
-Create new Schema called “habityouheard”
-In MySQL, navigate to Administration -> Management -> Users and Privileges 
-Click add account. Make sure that you take note of the login name and password
+1. Create new Schema called “habityouheard”
+2. In MySQL, navigate to Administration -> Management -> Users and Privileges 
+-Click add account. Make sure that you take note of the login name and password
 
-Navigate to Schema Privileges. 
+3. Navigate to Schema Privileges. 
 
-Click Add Entry Select habityouheard
+-Click Add Entry Select habityouheard
 
-Click the Select “ALL” button
+-Click the Select “ALL” button
 
-Before bootRun, add the previously mentioned login name and password from your Add Account step and create Environmental Variables in IntelliJ named : “DB_LOGIN” And “DB_PASSWORD” respectively.
+4. In IntelliJ :
+-Before bootRun, add the previously mentioned login name and password from your Add Account step and create [Environmental Variables](https://education.launchcode.org/gis-devops/configurations/02-environment-variables-intellij/index.html) in IntelliJ named : “DB_LOGIN” And “DB_PASSWORD” respectively.
 
 ## Usage
 
