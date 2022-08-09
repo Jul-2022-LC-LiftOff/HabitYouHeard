@@ -12,6 +12,11 @@ import java.util.List;
 
 @Entity
 public class User {
+
+    @Id
+    @GeneratedValue
+    private int id;
+
     @Email (message = "Not a valid email.")
     private String email;
 
@@ -27,10 +32,6 @@ public class User {
     private List<Habit> habits = new ArrayList<>();
 
     private int points;
-
-    @Id
-    @GeneratedValue
-    private int id;
 
     public User() {}
 
