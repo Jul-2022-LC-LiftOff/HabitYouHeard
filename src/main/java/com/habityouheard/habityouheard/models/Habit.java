@@ -10,6 +10,10 @@ import java.util.List;
 @Entity
 public class Habit {
 
+    @Id
+    @GeneratedValue
+    private int id;
+
     @NotBlank(message = "Habit name must not be empty.")
     @Size(max = 128, message = "Habit name must be less than 128 characters.")
     private String name;
@@ -25,21 +29,15 @@ public class Habit {
 
     private int pointValue;
 
-    @OneToMany(mappedBy= "habit")
+    @OneToMany(mappedBy = "habit")
     private List<HabitMeta> habitMetaList = new ArrayList<>();
 
     @ManyToOne
     private User user;
 
-    @Id
-    @GeneratedValue
-    private int id;
-
     private int streak;
 
     public Habit(){}
-
-
 
     public Habit(String name, String description, List<String> selectedDays, int pointValue, List<HabitMeta> habitMetaList, int streak) {
         this.name = name;
@@ -91,13 +89,9 @@ public class Habit {
     }
 
     public void updateStreak(boolean completedHabit) {
-        if (completedHabit) {
-            streak++;
-        }
-        else {
-            streak = 0;
-        }
+        streak = (completedHabit) ? streak++ : 0;
     }
+
     //TODO 1: add updatePointsMethods()
     //TODO 2: add job(s)
 

@@ -9,13 +9,11 @@ import java.util.Date;
 @Entity
 public class HabitMeta {
 
-
-
-    private boolean completedHabit;
-
     @GeneratedValue
     @Id
     private int id;
+
+    private boolean completedHabit;
 
     @ManyToOne
     private Habit habit;
