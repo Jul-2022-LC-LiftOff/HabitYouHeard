@@ -13,8 +13,6 @@ public class HabitMeta {
     @GeneratedValue
     private int id;
 
-    private boolean completedHabit;
-
     @ManyToOne
     private Habit habit;
 
