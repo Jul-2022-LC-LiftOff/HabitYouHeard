@@ -20,14 +20,14 @@ public class HabitsController {
     UserRepository userRepository;
 
     @GetMapping("habits/{userId}")
-    public List<Habit> returnUserHabits(Model model, @PathVariable int userId){
+    public List<Habit> returnUserHabits(@PathVariable int userId){
         Optional<User> optUser = userRepository.findById(userId);
         if(optUser.isPresent()) { //Thought: what happens when the user doesn't have any habits? Does the list just remain empty?
             User user = (User) optUser.get();
             List<Habit> habits = user.getHabits();
             return habits;
         } else {
-            model.addAttribute("noUserError", true); //do we want to have a variable that contains whether the habit list has any habits? Perhaps it replaces the list with
+            //do we want to have a variable that contains whether the habit list has any habits? Perhaps it replaces the list with
                                                                              //some text like "You do not have any habits, would you like to make one?", and then has a hyperlink to the create page.
             return new ArrayList<Habit>();
         }
