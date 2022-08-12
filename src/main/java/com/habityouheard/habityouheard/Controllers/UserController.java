@@ -1,10 +1,11 @@
-package com.habityouheard.habityouheard.Controllers;
+package com.habityouheard.habityouheard.controllers;
 
 import com.habityouheard.habityouheard.models.User;
 import com.habityouheard.habityouheard.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
@@ -20,6 +21,8 @@ public class UserController {
     /// creating a user
     @PostMapping("create")
     public ResponseEntity<String> createUser( @Valid @RequestBody User createUser ){
+        String hashedPassword = BCrypt.hashpw(createUser.getPassword(),BCrypt.gensalt(10));
+        createUser.setPassword(hashedPassword);
         userRepository.save(createUser);
         return new ResponseEntity<String>("Created", HttpStatus.CREATED);
 
