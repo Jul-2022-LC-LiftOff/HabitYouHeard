@@ -32,10 +32,17 @@ public class UserController {
         return new ResponseEntity<String>("Deleted", HttpStatus.ACCEPTED);
     }
 
-    ///getting the id of a user
+   ///getting the id of a user
     @GetMapping("{id}")
-    public User getUserid(int id){
-        return userRepository.getReferenceById(id);
+    public ResponseEntity<User> getUserid(@PathVariable int id) {
+        Optional<User> optUser = userRepository.findById(id);
+        if (optUser.isPresent()) {
+            User user = (User) optUser.get();
+            return ResponseEntity.ok().body(user);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
     }
 
 }
