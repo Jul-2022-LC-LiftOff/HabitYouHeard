@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.MessageDigest;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
@@ -31,10 +33,11 @@ public class AuthenticationController {
 
 
             if(BCrypt.checkpw(json.get("password"),user.getPassword())){
-                String hashCode = String.valueOf(user.hashCode());
+                String date = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
+                String hashCode = BCrypt.hashpw(date,BCrypt.gensalt(10));
                 return new ResponseEntity<>(hashCode, HttpStatus.OK);
             }
         }
-        return new ResponseEntity<>("How dare you", HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>("Invalid", HttpStatus.FORBIDDEN);
     }
 }
