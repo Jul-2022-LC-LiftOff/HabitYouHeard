@@ -10,6 +10,7 @@ import java.util.List;
 
 @Entity
 public class Habit {
+    
     @Id
     @GeneratedValue
     private int id;
@@ -29,13 +30,13 @@ public class Habit {
     //Todo: add Group object
     //private Group group;
 
-    @OneToMany(mappedBy= "habit")
+    private int pointValue;
+
+    @OneToMany(mappedBy = "habit")
     private List<HabitMeta> habitMetaList = new ArrayList<>();
 
     @ManyToOne
     private User user;
-
-    private int pointValue;
 
     private int streak;
 
@@ -91,13 +92,9 @@ public class Habit {
     }
 
     public void updateStreak(boolean completedHabit) {
-        if (completedHabit) {
-            streak++;
-        }
-        else {
-            streak = 0;
-        }
+        streak = (completedHabit) ? streak++ : 0;
     }
+
     //TODO 1: add updatePointsMethods()
     //TODO 2: add job(s)
 

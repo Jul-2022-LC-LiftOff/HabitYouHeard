@@ -8,6 +8,7 @@ import java.util.Date;
 
 @Entity
 public class HabitMeta {
+
     @Id
     @GeneratedValue
     private int id;
@@ -19,9 +20,8 @@ public class HabitMeta {
 
     private Date dateOfCompletion;
 
-    public HabitMeta() {
-
-    }
+    public HabitMeta() {}
+    
     public HabitMeta(boolean completedHabit, Habit habit, Date dateOfCompletion) {
         this.completedHabit = completedHabit;
         this.habit = habit;
