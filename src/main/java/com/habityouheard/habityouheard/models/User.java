@@ -1,14 +1,13 @@
 package com.habityouheard.habityouheard.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
+import javax.transaction.Transactional;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class User {
@@ -16,6 +15,7 @@ public class User {
     @Id
     @GeneratedValue
     private int id;
+
 
     @Email (message = "Not a valid email.")
     private String email;
@@ -28,19 +28,29 @@ public class User {
     @NotBlank (message = "Password must not be empty.")
     private String password;
 
-    @OneToMany
+    private String authToken;
+
+
+    @OneToMany(mappedBy = "user")
     private List<Habit> habits = new ArrayList<>();
 
     private int points;
 
     public User() {}
 
-    public User(String email, String username, String password, List<Habit> habits, int points) {
+    public User(String email, String username, String password, int points) {
         this.email = email;
         this.username = username;
         this.password = password;
-        this.habits = habits;
         this.points = points;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
     }
 
     public String getEmail() {
@@ -81,5 +91,18 @@ public class User {
 
     public void setPoints(int points) {
         this.points = points;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id && points == user.points && Objects.equals(email, user.email) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(habits, user.habits);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username);
     }
 }
