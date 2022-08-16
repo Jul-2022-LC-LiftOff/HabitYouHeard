@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.security.MessageDigest;
 
 import java.text.SimpleDateFormat;
@@ -18,12 +19,13 @@ import java.util.Optional;
 /**
  * Created by Micah Young
  */
+@Transactional
 @RestController
 @RequestMapping("api/auth")
 public class AuthenticationController {
     @Autowired
     UserRepository userRepository;
-    @PostMapping ("token")
+    @PostMapping ("assign/token")
     public ResponseEntity<String> provideToken(@RequestBody Map<String, String> json) {
         Optional<User> optUser = userRepository.findByUsername(json.get("username"));
 
@@ -33,11 +35,28 @@ public class AuthenticationController {
 
 
             if(BCrypt.checkpw(json.get("password"),user.getPassword())){
+
                 String date = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
-                String hashCode = BCrypt.hashpw(date,BCrypt.gensalt(10));
+                String hashCode = BCrypt.hashpw(date + user.getUsername() ,BCrypt.gensalt(10));
+                user.setAuthToken(hashCode);
+                userRepository.save(user);
                 return new ResponseEntity<>(hashCode, HttpStatus.OK);
             }
+
         }
-        return new ResponseEntity<>("Invalid", HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>("Invalid Password", HttpStatus.FORBIDDEN);
+    }
+
+    @PostMapping("get/user")
+    public User getUserByToken(@RequestBody Map<String, String> json) {
+        System.out.println(json.get("authToken"));
+        Optional<User> optUser = userRepository.findByAuthToken(json.get("authToken"));
+        if(optUser.isPresent()){
+            User user = (User) optUser.get();
+            user.getHabits();
+            return user;
+        }
+
+        return new User();
     }
 }
