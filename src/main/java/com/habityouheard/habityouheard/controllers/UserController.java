@@ -1,4 +1,4 @@
-package com.habityouheard.habityouheard.Controllers;
+package com.habityouheard.habityouheard.controllers;
 
 import com.habityouheard.habityouheard.models.User;
 import com.habityouheard.habityouheard.repositories.UserRepository;
@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.util.Optional;
 
 ///api/user
 @CrossOrigin
@@ -31,4 +32,16 @@ public class UserController {
         userRepository.delete(deleteUser);
         return new ResponseEntity<String>("Deleted", HttpStatus.ACCEPTED);
     }
+    @GetMapping("{id}")
+    public ResponseEntity<User> getUserid(@PathVariable int id) {
+        Optional<User> optUser = userRepository.findById(id);
+        if (optUser.isPresent()) {
+            User user = (User) optUser.get();
+            return ResponseEntity.ok().body(user);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+    }
 }
+
