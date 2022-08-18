@@ -46,7 +46,7 @@ public class HabitController {
     public ResponseEntity<String> processAddHabitForm(@RequestBody @Valid Habit newHabit, Errors errors) {
 
         if (errors.hasErrors()) {
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         habitRepository.save(newHabit);
         return new ResponseEntity<>("created", HttpStatus.CREATED);
