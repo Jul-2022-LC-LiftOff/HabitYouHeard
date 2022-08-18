@@ -62,21 +62,5 @@ public class HabitController {
 
         habitRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-
-    // affirm a habit
-//    @PutMapping("{habitId}/affirm")
-//    public String confirmHabitDoneToday( int habitId) {
-//        Optional optHabit = habitRepository.findById(habitId);
-//        if (!optHabit.isEmpty()) {
-//            Habit habit = (Habit) optHabit.get();
-//            List<HabitMeta> habitMetaList = habit.getHabitMetaList();
-//            return ResponseEntity.ok().body(habitMetaList);
-////            System.out.println(habitMetaList.get(habitMetaList.size() - 1));
-//        }
-//
-//        return habitMetaList;
-//
-//
-//    }
+    }
 }
