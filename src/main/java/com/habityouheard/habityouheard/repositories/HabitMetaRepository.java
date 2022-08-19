@@ -16,6 +16,6 @@ import java.util.Optional;
 public interface HabitMetaRepository extends JpaRepository<HabitMeta,Integer> {
 
     @Query(value = "SELECT * FROM habit_meta where habit_id = :#{#habitId} ORDER BY `date_of_completion` DESC LIMIT 1;", nativeQuery = true)
-    List<HabitMeta> findLatestByHabitId(@Param("habitId") Integer habitId);
+    List<HabitMeta> findLatestByHabitId(@Param("habitId") int habitId);
 
 }

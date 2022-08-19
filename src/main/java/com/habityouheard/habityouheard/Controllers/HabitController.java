@@ -65,20 +65,16 @@ public class HabitController {
     }
 
     // affirm
-    @PutMapping("{habitId}/affirm")
-    public String confirmHabitDoneToday(Integer habitId) {
-        List<HabitMeta> latestHabitMeta = habitMetaRepository.findLatestByHabitId(habitId);
+    @PutMapping("{id}/affirm")
+    public String confirmHabitDoneToday(@PathVariable(value= "id") int id) {
+        List<HabitMeta> latestHabitMeta = habitMetaRepository.findLatestByHabitId(id);
         System.out.println(latestHabitMeta);
+//            if !(latestHabitMeta.get(2) == Date) {
+//            habitMetaRepository.save(newHabitMeta);
+//            //update streak here?
+//            return new ResponseEntity<>("created", HttpStatus.CREATED);
+//            }
 
-//        habitMetaRepository.findBy(String<S> "habit_id")
-//        Optional optHabit = habitRepository.findById(habitId);
-//        if (!optHabit.isEmpty()) {
-//            Habit habit = (Habit) optHabit.get();
-//            List<HabitMeta> habitMetaList = habit.getHabitMetaList();
-//            System.out.println(habitMetaList.get(habitMetaList.size() - 1));
-//
-//
-//        }
         return "hey";
     }
 }
