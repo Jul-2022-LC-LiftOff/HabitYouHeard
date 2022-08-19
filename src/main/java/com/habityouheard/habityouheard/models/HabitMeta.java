@@ -22,9 +22,8 @@ public class HabitMeta {
 
     public HabitMeta() {}
     
-    public HabitMeta(boolean completedHabit, Habit habit, Date dateOfCompletion) {
+    public HabitMeta(boolean completedHabit, Date dateOfCompletion) {
         this.completedHabit = completedHabit;
-        this.habit = habit;
         this.dateOfCompletion = dateOfCompletion;
     }
 

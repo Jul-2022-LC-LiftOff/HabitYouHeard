@@ -32,7 +32,7 @@ public class Habit {
 
     private int pointValue;
 
-    @OneToMany(mappedBy = "habit")
+    @OneToMany
     private List<HabitMeta> habitMetaList = new ArrayList<>();
 
     @ManyToOne

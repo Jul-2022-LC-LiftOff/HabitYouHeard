@@ -63,4 +63,22 @@ public class HabitController {
         habitRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    // affirm
+    @PutMapping("{habitId}/affirm")
+    public String confirmHabitDoneToday(Integer habitId) {
+        List<HabitMeta> latestHabitMeta = habitMetaRepository.findLatestByHabitId(habitId);
+        System.out.println(latestHabitMeta);
+
+//        habitMetaRepository.findBy(String<S> "habit_id")
+//        Optional optHabit = habitRepository.findById(habitId);
+//        if (!optHabit.isEmpty()) {
+//            Habit habit = (Habit) optHabit.get();
+//            List<HabitMeta> habitMetaList = habit.getHabitMetaList();
+//            System.out.println(habitMetaList.get(habitMetaList.size() - 1));
+//
+//
+//        }
+        return "hey";
+    }
 }
