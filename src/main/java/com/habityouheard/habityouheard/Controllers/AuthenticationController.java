@@ -13,6 +13,7 @@ import java.security.MessageDigest;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -26,8 +27,9 @@ public class AuthenticationController {
     @Autowired
     UserRepository userRepository;
     @PostMapping ("assign/token")
-    public ResponseEntity<String> provideToken(@RequestBody Map<String, String> json) {
+    public ResponseEntity<Object> provideToken(@RequestBody Map<String, String> json) {
         Optional<User> optUser = userRepository.findByUsername(json.get("username"));
+        Map<String,String> responseBody = new HashMap<>();
 
         if(optUser.isPresent()){
 
@@ -39,15 +41,19 @@ public class AuthenticationController {
                 String date = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
                 String hashCode = BCrypt.hashpw(date + user.getUsername() ,BCrypt.gensalt(10));
                 user.setAuthToken(hashCode);
+                responseBody.put("token",hashCode);
                 userRepository.save(user);
-                return new ResponseEntity<>(hashCode, HttpStatus.OK);
+                return new ResponseEntity<>(responseBody, HttpStatus.OK);
             }
 
         } else {
-            return new ResponseEntity<>("User Not Found", HttpStatus.FORBIDDEN);
+            responseBody.put("errorMessage","User Not Found");
+            return new ResponseEntity<>(responseBody, HttpStatus.FORBIDDEN);
 
         }
-        return new ResponseEntity<>("Invalid Password", HttpStatus.FORBIDDEN);
+        responseBody.put("errorMessage","Invalid Password");
+
+        return new ResponseEntity<>(responseBody, HttpStatus.FORBIDDEN);
     }
 
     @PostMapping("get/user")
