@@ -19,9 +19,9 @@ import java.util.Optional;
 /**
  * Created by Micah Young
  */
-@Transactional
 @RestController
 @RequestMapping("api/auth")
+@CrossOrigin
 public class AuthenticationController {
     @Autowired
     UserRepository userRepository;
@@ -43,6 +43,9 @@ public class AuthenticationController {
                 return new ResponseEntity<>(hashCode, HttpStatus.OK);
             }
 
+        } else {
+            return new ResponseEntity<>("User Not Found", HttpStatus.FORBIDDEN);
+
         }
         return new ResponseEntity<>("Invalid Password", HttpStatus.FORBIDDEN);
     }
@@ -53,7 +56,8 @@ public class AuthenticationController {
         Optional<User> optUser = userRepository.findByAuthToken(json.get("authToken"));
         if(optUser.isPresent()){
             User user = (User) optUser.get();
-            user.getHabits();
+            System.out.println(user.toString());
+            System.out.println(json.get("authToken"));
             return user;
         }
 
