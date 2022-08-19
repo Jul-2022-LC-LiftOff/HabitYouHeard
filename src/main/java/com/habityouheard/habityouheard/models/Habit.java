@@ -35,19 +35,15 @@ public class Habit {
     @OneToMany
     private List<HabitMeta> habitMetaList = new ArrayList<>();
 
-    @ManyToOne
-    private User user;
-
     private int streak;
 
     public Habit(){}
 
-    public Habit(String name, String description, List<String> selectedDays, int pointValue, List<HabitMeta> habitMetaList, int streak) {
+    public Habit(String name, String description, List<String> selectedDays, int pointValue, int streak) {
         this.name = name;
         this.description = description;
         this.selectedDays = selectedDays;
         this.pointValue = pointValue;
-        this.habitMetaList = habitMetaList;
         this.streak = streak;
     }
 

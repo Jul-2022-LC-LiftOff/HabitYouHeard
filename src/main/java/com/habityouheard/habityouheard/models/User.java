@@ -1,9 +1,6 @@
 package com.habityouheard.habityouheard.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -28,7 +25,7 @@ public class User {
     @NotBlank (message = "Password must not be empty.")
     private String password;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Habit> habits = new ArrayList<>();
 
     private int points;

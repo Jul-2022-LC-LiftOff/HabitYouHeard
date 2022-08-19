@@ -13,9 +13,6 @@ public class HabitMeta {
     @GeneratedValue
     private int id;
 
-    @ManyToOne
-    private Habit habit;
-
     private boolean completedHabit;
 
     private Date dateOfCompletion;
@@ -33,10 +30,6 @@ public class HabitMeta {
 
     public int getId() {
         return id;
-    }
-
-    public Habit getHabit() {
-        return habit;
     }
 
     public Date getDateOfCompletion() {
