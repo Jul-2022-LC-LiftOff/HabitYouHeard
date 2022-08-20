@@ -1,11 +1,15 @@
 package com.habityouheard.habityouheard.models;
 
+import org.hibernate.mapping.Map;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Entity
@@ -90,6 +94,17 @@ public class Habit {
     public void updateStreak(boolean completedHabit) {
         streak = (completedHabit) ? streak++ : 0;
     }
+
+    //create new habitMeta method (upend habitMeta list up top)
+    public HashMap<String, Object> createHabitMeta(Boolean affirmedHabit, int habitId) {
+        HashMap<String, Object> habitMetaHash = new HashMap<String,Object>();
+        Date date= new Date();
+        habitMetaHash.put("completed_habit", affirmedHabit);
+        habitMetaHash.put("date_of_completion", date);
+        habitMetaHash.put("habit_id", habitId);
+        return habitMetaHash;
+    }
+
 
     //TODO 1: add updatePointsMethods()
     //TODO 2: add job(s)

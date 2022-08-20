@@ -14,6 +14,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,14 +43,16 @@ public class HabitController {
     }
 
     // add a habit
-    @PostMapping("add")
-    public ResponseEntity<String> processAddHabitForm(@RequestBody @Valid Habit newHabit, Errors errors) {
+    @PostMapping("create")
+    public ResponseEntity<String> createHabit(@RequestBody @Valid Habit newHabit, Errors errors) {
 
         if (errors.hasErrors()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         habitRepository.save(newHabit);
         return new ResponseEntity<>("created", HttpStatus.CREATED);
+
+        // TODO: will need to add some way to fill the pivot table
     }
 
     // delete a habit
@@ -66,15 +69,20 @@ public class HabitController {
 
     // affirm
     @PutMapping("{id}/affirm")
-    public String confirmHabitDoneToday(@PathVariable(value= "id") int id) {
-        List<HabitMeta> latestHabitMeta = habitMetaRepository.findLatestByHabitId(id);
-        System.out.println(latestHabitMeta);
-//            if !(latestHabitMeta.get(2) == Date) {
-//            habitMetaRepository.save(newHabitMeta);
-//            //update streak here?
-//            return new ResponseEntity<>("created", HttpStatus.CREATED);
-//            }
+    public ResponseEntity<HabitMeta> affirmHabitToday(@PathVariable(value= "id") int id, @Valid Boolean affirmedHabit) {
+        Optional <HabitMeta> latestHabitMetaReference = habitMetaRepository.findTodaysByHabitId(id);
+        Optional optHabitMeta = habitRepository.findById(id);
 
-        return "hey";
+        if (latestHabitMetaReference.isPresent()) {
+            HabitMeta habitMeta = (HabitMeta) latestHabitMetaReference.get();
+            return ResponseEntity.ok().body(habitMeta);
+        } else {
+//            Boolean affirmed = isCompletedHabit();
+            HashMap newHabitMeta = createHabitMeta(affirmedHabit, id);
+            habitMetaRepository.save(newHabitMeta);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }
+
+
     }
 }
