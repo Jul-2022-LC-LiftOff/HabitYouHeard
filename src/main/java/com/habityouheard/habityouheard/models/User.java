@@ -25,7 +25,7 @@ public class User {
     @NotBlank (message = "Password must not be empty.")
     private String password;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(targetEntity=Habit.class,cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Habit> habits = new ArrayList<>();
 
     private int points;
@@ -79,4 +79,5 @@ public class User {
     public void setPoints(int points) {
         this.points = points;
     }
+
 }

@@ -2,6 +2,7 @@ package com.habityouheard.habityouheard.Controllers;
 
 import com.habityouheard.habityouheard.models.Habit;
 import com.habityouheard.habityouheard.models.HabitMeta;
+import com.habityouheard.habityouheard.models.User;
 import com.habityouheard.habityouheard.repositories.HabitMetaRepository;
 import com.habityouheard.habityouheard.repositories.HabitRepository;
 import com.habityouheard.habityouheard.repositories.UserRepository;
@@ -25,8 +26,9 @@ import java.util.Optional;
 public class HabitController {
 
     @Autowired
+    UserRepository userRepository;
+    @Autowired
     HabitRepository habitRepository;
-
     @Autowired
     HabitMetaRepository habitMetaRepository;
 
@@ -49,9 +51,20 @@ public class HabitController {
         if (errors.hasErrors()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        habitRepository.save(newHabit);
-        return new ResponseEntity<>("created", HttpStatus.CREATED);
 
+        habitRepository.save(newHabit);
+
+        Optional<User> userReference = userRepository.findById(12);
+
+
+        if (userReference.isPresent()) {
+            User user = (User) userReference.get();
+            List habitList = user.getHabits();
+            habitList.add(newHabit);
+            user.setHabits(habitList);
+//            userReference.save()
+        }
+        return new ResponseEntity<>("created", HttpStatus.CREATED);
         // TODO: will need to add some way to fill the pivot table
     }
 
@@ -69,20 +82,17 @@ public class HabitController {
 
     // affirm
     @PutMapping("{id}/affirm")
-    public ResponseEntity<HabitMeta> affirmHabitToday(@PathVariable(value= "id") int id, @Valid Boolean affirmedHabit) {
-        Optional <HabitMeta> latestHabitMetaReference = habitMetaRepository.findTodaysByHabitId(id);
+    public ResponseEntity<HabitMeta> affirmHabitToday(@PathVariable(value= "id") int id, @RequestBody @Valid HabitMeta newHabitMeta) {
+        Optional<HabitMeta> latestHabitMetaReference = habitMetaRepository.findTodaysByHabitId(id);
         Optional optHabitMeta = habitRepository.findById(id);
 
         if (latestHabitMetaReference.isPresent()) {
             HabitMeta habitMeta = (HabitMeta) latestHabitMetaReference.get();
             return ResponseEntity.ok().body(habitMeta);
         } else {
-//            Boolean affirmed = isCompletedHabit();
-            HashMap newHabitMeta = createHabitMeta(affirmedHabit, id);
             habitMetaRepository.save(newHabitMeta);
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
-
-
     }
+
 }

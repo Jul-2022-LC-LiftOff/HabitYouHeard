@@ -96,13 +96,12 @@ public class Habit {
     }
 
     //create new habitMeta method (upend habitMeta list up top)
-    public HashMap<String, Object> createHabitMeta(Boolean affirmedHabit, int habitId) {
-        HashMap<String, Object> habitMetaHash = new HashMap<String,Object>();
-        Date date= new Date();
-        habitMetaHash.put("completed_habit", affirmedHabit);
-        habitMetaHash.put("date_of_completion", date);
-        habitMetaHash.put("habit_id", habitId);
-        return habitMetaHash;
+
+    //create a habitmeta
+    public void addHabitMetaToHabitMeta() {
+
+        //add habitmeta to this hm list just for this habit .add(
+
     }
 
 
