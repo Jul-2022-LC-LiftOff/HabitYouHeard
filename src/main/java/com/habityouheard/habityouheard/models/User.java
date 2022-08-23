@@ -11,7 +11,7 @@ import java.util.List;
 public class User {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Email (message = "Not a valid email.")
@@ -25,7 +25,7 @@ public class User {
     @NotBlank (message = "Password must not be empty.")
     private String password;
 
-    @OneToMany(targetEntity=Habit.class,cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", targetEntity=Habit.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Habit> habits = new ArrayList<>();
 
     private int points;

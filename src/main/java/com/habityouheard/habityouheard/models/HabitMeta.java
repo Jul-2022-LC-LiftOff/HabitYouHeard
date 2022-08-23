@@ -1,27 +1,33 @@
 package com.habityouheard.habityouheard.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 public class HabitMeta {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private boolean completedHabit;
 
     private Date dateOfCompletion;
 
+    @JsonIgnore
+    @ManyToOne
+    private Habit habit;
+
     public HabitMeta() {}
     
-    public HabitMeta(boolean completedHabit, Date dateOfCompletion) {
+    public HabitMeta(boolean completedHabit, Habit habit) {
         this.completedHabit = completedHabit;
-        this.dateOfCompletion = dateOfCompletion;
+        this.habit = habit;
+
+        Date newDate =  new Date();
+        this.dateOfCompletion = newDate;
     }
 
     public boolean isCompletedHabit() {
@@ -42,5 +48,12 @@ public class HabitMeta {
 
     public void setDateOfCompletion(Date dateOfCompletion) {
         this.dateOfCompletion = dateOfCompletion;
+    }
+
+    public Habit getHabit() {
+        return habit;
+    }
+    public void setHabit(Habit habit) {
+        this.habit = habit;
     }
 }

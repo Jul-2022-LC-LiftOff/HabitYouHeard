@@ -1,5 +1,6 @@
 package com.habityouheard.habityouheard.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.mapping.Map;
 
 import javax.persistence.*;
@@ -16,7 +17,7 @@ import java.util.List;
 public class Habit {
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @NotBlank(message = "Habit name must not be empty.")
@@ -36,19 +37,24 @@ public class Habit {
 
     private int pointValue;
 
-    @OneToMany
+    @OneToMany(mappedBy = "habit", targetEntity=HabitMeta.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<HabitMeta> habitMetaList = new ArrayList<>();
 
     private int streak;
 
+    @JsonIgnore
+    @ManyToOne
+    private User user;
+
     public Habit(){}
 
-    public Habit(String name, String description, List<String> selectedDays, int pointValue, int streak) {
+    public Habit(String name, String description, List<String> selectedDays, int pointValue, int streak, User user) {
         this.name = name;
         this.description = description;
         this.selectedDays = selectedDays;
         this.pointValue = pointValue;
         this.streak = streak;
+        this.user = user;
     }
 
     public String getName() {
@@ -97,12 +103,15 @@ public class Habit {
 
     //create new habitMeta method (upend habitMeta list up top)
 
-    //create a habitmeta
-    public void addHabitMetaToHabitMeta() {
-
-        //add habitmeta to this hm list just for this habit .add(
-
+    public User getUser() {
+        return user;
     }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+
 
 
     //TODO 1: add updatePointsMethods()

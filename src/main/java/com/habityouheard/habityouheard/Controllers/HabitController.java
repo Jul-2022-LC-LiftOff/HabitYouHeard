@@ -14,6 +14,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +26,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("api/habit")
 public class HabitController {
-
+    @Autowired
+    EntityManager entityManager;
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -45,25 +48,27 @@ public class HabitController {
     }
 
     // add a habit
+    @Transactional
     @PostMapping("create")
     public ResponseEntity<String> createHabit(@RequestBody @Valid Habit newHabit, Errors errors) {
+        Optional<User> userReference = userRepository.findById(1);
 
         if (errors.hasErrors()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        habitRepository.save(newHabit);
-
-        Optional<User> userReference = userRepository.findById(12);
-
-
-        if (userReference.isPresent()) {
-            User user = (User) userReference.get();
-            List habitList = user.getHabits();
-            habitList.add(newHabit);
-            user.setHabits(habitList);
-//            userReference.save()
+        if (!userReference.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
+        System.out.println(userReference);
+        User user = (User) userReference.get();
+        newHabit.setUser(user);
+        System.out.println(user);
+        user.getHabits().add(newHabit);
+        entityManager.persist(user);
+        entityManager.flush();
+
         return new ResponseEntity<>("created", HttpStatus.CREATED);
         // TODO: will need to add some way to fill the pivot table
     }
@@ -81,16 +86,25 @@ public class HabitController {
     }
 
     // affirm
-    @PutMapping("{id}/affirm")
-    public ResponseEntity<HabitMeta> affirmHabitToday(@PathVariable(value= "id") int id, @RequestBody @Valid HabitMeta newHabitMeta) {
+    @Transactional
+    @PostMapping("{id}/affirm")
+    public ResponseEntity<HabitMeta> affirmHabitToday(@PathVariable(value= "id") int id) {
         Optional<HabitMeta> latestHabitMetaReference = habitMetaRepository.findTodaysByHabitId(id);
-        Optional optHabitMeta = habitRepository.findById(id);
+
 
         if (latestHabitMetaReference.isPresent()) {
             HabitMeta habitMeta = (HabitMeta) latestHabitMetaReference.get();
+            habitMeta.setCompletedHabit(true);
+            entityManager.persist(habitMeta);
+            entityManager.flush();
             return ResponseEntity.ok().body(habitMeta);
         } else {
-            habitMetaRepository.save(newHabitMeta);
+            Optional<Habit> habitReference = habitRepository.findById(id);
+            Habit habit = (Habit) habitReference.get();
+            HabitMeta newHabitMeta = new HabitMeta(true, habit);
+            habit.getHabitMetaList().add(newHabitMeta);
+            entityManager.persist(habit);
+            entityManager.flush();
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
     }
