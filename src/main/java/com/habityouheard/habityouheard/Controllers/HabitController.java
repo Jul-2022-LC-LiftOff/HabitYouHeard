@@ -108,5 +108,26 @@ public class HabitController {
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
     }
+    @Transactional
+    @PostMapping("{id}/defirm")
+    public ResponseEntity<HabitMeta> defirmHabitToday(@PathVariable(value= "id") int id) {
+        Optional<HabitMeta> latestHabitMetaReference = habitMetaRepository.findTodaysByHabitId(id);
 
+
+        if (latestHabitMetaReference.isPresent()) {
+            HabitMeta habitMeta = (HabitMeta) latestHabitMetaReference.get();
+            habitMeta.setCompletedHabit(false);
+            entityManager.persist(habitMeta);
+            entityManager.flush();
+            return ResponseEntity.ok().body(habitMeta);
+        } else {
+            Optional<Habit> habitReference = habitRepository.findById(id);
+            Habit habit = (Habit) habitReference.get();
+            HabitMeta newHabitMeta = new HabitMeta(false, habit);
+            habit.getHabitMetaList().add(newHabitMeta);
+            entityManager.persist(habit);
+            entityManager.flush();
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }
+    }
 }
