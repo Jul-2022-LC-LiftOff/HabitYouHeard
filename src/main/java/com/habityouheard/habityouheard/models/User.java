@@ -1,9 +1,6 @@
 package com.habityouheard.habityouheard.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -14,7 +11,7 @@ import java.util.List;
 public class User {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Email (message = "Not a valid email.")
@@ -28,7 +25,7 @@ public class User {
     @NotBlank (message = "Password must not be empty.")
     private String password;
 
-    @OneToMany
+    @OneToMany(mappedBy = "user", targetEntity=Habit.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Habit> habits = new ArrayList<>();
 
     private int points;
@@ -82,4 +79,5 @@ public class User {
     public void setPoints(int points) {
         this.points = points;
     }
+
 }

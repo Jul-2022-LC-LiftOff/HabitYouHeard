@@ -1,18 +1,23 @@
 package com.habityouheard.habityouheard.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.mapping.Map;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Entity
 public class Habit {
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @NotBlank(message = "Habit name must not be empty.")
@@ -32,23 +37,24 @@ public class Habit {
 
     private int pointValue;
 
-    @OneToMany(mappedBy = "habit")
+    @OneToMany(mappedBy = "habit", targetEntity=HabitMeta.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<HabitMeta> habitMetaList = new ArrayList<>();
-
-    @ManyToOne
-    private User user;
 
     private int streak;
 
+    @JsonIgnore
+    @ManyToOne
+    private User user;
+
     public Habit(){}
 
-    public Habit(String name, String description, List<String> selectedDays, int pointValue, List<HabitMeta> habitMetaList, int streak) {
+    public Habit(String name, String description, List<String> selectedDays, int pointValue, int streak, User user) {
         this.name = name;
         this.description = description;
         this.selectedDays = selectedDays;
         this.pointValue = pointValue;
-        this.habitMetaList = habitMetaList;
         this.streak = streak;
+        this.user = user;
     }
 
     public String getName() {
@@ -94,6 +100,19 @@ public class Habit {
     public void updateStreak(boolean completedHabit) {
         streak = (completedHabit) ? streak++ : 0;
     }
+
+    //create new habitMeta method (upend habitMeta list up top)
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+
+
 
     //TODO 1: add updatePointsMethods()
     //TODO 2: add job(s)
