@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 ///api/Habit
 @CrossOrigin
@@ -64,13 +64,16 @@ public class HabitController {
         System.out.println(userReference);
         User user = (User) userReference.get();
         newHabit.setUser(user);
-        System.out.println(user);
+        Date date = Calendar.getInstance().getTime();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        newHabit.setStartDate(dateFormat.format(date));
         user.getHabits().add(newHabit);
         entityManager.persist(user);
         entityManager.flush();
 
         return new ResponseEntity<>("created", HttpStatus.CREATED);
-        // TODO: will need to add some way to fill the pivot table
+
     }
 
     // delete a habit
