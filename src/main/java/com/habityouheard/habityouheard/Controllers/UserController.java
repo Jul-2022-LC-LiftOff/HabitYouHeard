@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.util.Optional;
 
 ///api/user
 @CrossOrigin
@@ -34,11 +35,16 @@ public class UserController {
         userRepository.delete(deleteUser);
         return new ResponseEntity<String>("Deleted", HttpStatus.ACCEPTED);
     }
-
-    ///getting the id of a user
     @GetMapping("{id}")
-    public User getUserid(int id){
-        return userRepository.getReferenceById(id);
-    }
+    public ResponseEntity<User> getUserid(@PathVariable int id) {
+        Optional<User> optUser = userRepository.findById(id);
+        if (optUser.isPresent()) {
+            User user = (User) optUser.get();
+            return ResponseEntity.ok().body(user);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
+    }
 }
+
