@@ -101,8 +101,4 @@ public class User {
         return id == user.id && points == user.points && Objects.equals(email, user.email) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(habits, user.habits);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(username);
-    }
 }
