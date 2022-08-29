@@ -1,8 +1,6 @@
 package com.habityouheard.habityouheard.models;
 
 import javax.persistence.*;
-
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -30,8 +28,6 @@ public class User {
     private String password;
 
     private String authToken;
-
-
 
     @OneToMany(mappedBy = "user", targetEntity=Habit.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Habit> habits = new ArrayList<>();
