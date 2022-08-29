@@ -1,7 +1,8 @@
 package com.habityouheard.habityouheard.models;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
+
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -13,7 +14,7 @@ import java.util.Objects;
 public class User {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
 
@@ -31,7 +32,8 @@ public class User {
     private String authToken;
 
 
-    @OneToMany(mappedBy = "user")
+
+    @OneToMany(mappedBy = "user", targetEntity=Habit.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Habit> habits = new ArrayList<>();
 
     private int points;
@@ -100,5 +102,6 @@ public class User {
         User user = (User) o;
         return id == user.id && points == user.points && Objects.equals(email, user.email) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(habits, user.habits);
     }
+
 
 }
