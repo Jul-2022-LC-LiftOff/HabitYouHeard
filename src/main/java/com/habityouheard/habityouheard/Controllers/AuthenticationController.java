@@ -8,10 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.MessageDigest;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -20,12 +19,14 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("api/auth")
+@CrossOrigin
 public class AuthenticationController {
     @Autowired
     UserRepository userRepository;
-    @PostMapping ("token")
-    public ResponseEntity<String> provideToken(@RequestBody Map<String, String> json) {
+    @PostMapping ("assign/token")
+    public ResponseEntity<Object> provideToken(@RequestBody Map<String, String> json) {
         Optional<User> optUser = userRepository.findByUsername(json.get("username"));
+        Map<String,String> responseBody = new HashMap<>();
 
         if(optUser.isPresent()){
 
@@ -33,11 +34,36 @@ public class AuthenticationController {
 
 
             if(BCrypt.checkpw(json.get("password"),user.getPassword())){
+
                 String date = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
-                String hashCode = BCrypt.hashpw(date,BCrypt.gensalt(10));
-                return new ResponseEntity<>(hashCode, HttpStatus.OK);
+                String hashCode = BCrypt.hashpw(date + user.getUsername() ,BCrypt.gensalt(10));
+                user.setAuthToken(hashCode);
+                responseBody.put("token",hashCode);
+                userRepository.save(user);
+                return new ResponseEntity<>(responseBody, HttpStatus.OK);
             }
+
+        } else {
+            responseBody.put("errorMessage","User Not Found");
+            return new ResponseEntity<>(responseBody, HttpStatus.FORBIDDEN);
+
         }
-        return new ResponseEntity<>("Invalid", HttpStatus.FORBIDDEN);
+        responseBody.put("errorMessage","Invalid Password");
+
+        return new ResponseEntity<>(responseBody, HttpStatus.FORBIDDEN);
+    }
+
+    @PostMapping("get/user")
+    public User getUserByToken(@RequestBody Map<String, String> json) {
+        System.out.println(json.get("authToken"));
+        Optional<User> optUser = userRepository.findByAuthToken(json.get("authToken"));
+        if(optUser.isPresent()){
+            User user = (User) optUser.get();
+            System.out.println(user.toString());
+            System.out.println(json.get("authToken"));
+            return user;
+        }
+
+        return new User();
     }
 }

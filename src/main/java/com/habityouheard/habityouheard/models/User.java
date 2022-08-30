@@ -6,6 +6,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class User {
@@ -13,6 +14,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
 
     @Email (message = "Not a valid email.")
     private String email;
@@ -25,6 +27,8 @@ public class User {
     @NotBlank (message = "Password must not be empty.")
     private String password;
 
+    private String authToken;
+
     @OneToMany(mappedBy = "user", targetEntity=Habit.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Habit> habits = new ArrayList<>();
 
@@ -32,12 +36,19 @@ public class User {
 
     public User() {}
 
-    public User(String email, String username, String password, List<Habit> habits, int points) {
+    public User(String email, String username, String password, int points) {
         this.email = email;
         this.username = username;
         this.password = password;
-        this.habits = habits;
         this.points = points;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
     }
 
     public String getEmail() {
@@ -79,5 +90,14 @@ public class User {
     public void setPoints(int points) {
         this.points = points;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id && points == user.points && Objects.equals(email, user.email) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(habits, user.habits);
+    }
+
 
 }
