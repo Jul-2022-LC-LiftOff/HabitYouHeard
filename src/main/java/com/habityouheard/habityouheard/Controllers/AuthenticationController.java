@@ -8,9 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
-import java.security.MessageDigest;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
