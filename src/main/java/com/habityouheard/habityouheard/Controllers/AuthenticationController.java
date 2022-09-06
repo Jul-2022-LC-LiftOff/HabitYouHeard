@@ -27,7 +27,7 @@ public class AuthenticationController {
     @Autowired
     UserRepository userRepository;
     @PostMapping ("assign/token")
-    public ResponseEntity<Object> provideToken(@RequestBody Map<String, String> json) {
+    public ResponseEntity<Object> provideTokenAndUserId(@RequestBody Map<String, String> json) {
         Optional<User> optUser = userRepository.findByUsername(json.get("username"));
         Map<String,String> responseBody = new HashMap<>();
 
@@ -42,6 +42,7 @@ public class AuthenticationController {
                 String hashCode = BCrypt.hashpw(date + user.getUsername() ,BCrypt.gensalt(10));
                 user.setAuthToken(hashCode);
                 responseBody.put("token",hashCode);
+                responseBody.put("userId",String.valueOf(user.getId()));
                 userRepository.save(user);
                 return new ResponseEntity<>(responseBody, HttpStatus.OK);
             }
@@ -69,4 +70,6 @@ public class AuthenticationController {
 
         return new User();
     }
+
+
 }

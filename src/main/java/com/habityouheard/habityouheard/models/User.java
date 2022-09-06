@@ -45,6 +45,10 @@ public class User {
         this.points = points;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public String getAuthToken() {
         return authToken;
     }
