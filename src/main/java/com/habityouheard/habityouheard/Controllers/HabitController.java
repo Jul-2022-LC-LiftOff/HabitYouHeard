@@ -73,7 +73,6 @@ public class HabitController {
         entityManager.flush();
 
         return new ResponseEntity<>("created", HttpStatus.CREATED);
-
     }
 
     // delete a habit
