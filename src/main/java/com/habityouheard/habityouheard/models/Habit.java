@@ -7,11 +7,10 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Entity
 public class Habit {
@@ -42,6 +41,8 @@ public class Habit {
 
     private int streak;
 
+    private String startDate;
+
     @JsonIgnore
     @ManyToOne
     private User user;
@@ -55,7 +56,9 @@ public class Habit {
         this.pointValue = pointValue;
         this.streak = streak;
         this.user = user;
+
     }
+
 
     public String getName() {
         return name;
@@ -111,6 +114,9 @@ public class Habit {
         this.user = user;
     }
 
+    public void setStartDate(String startDate){
+        this.startDate = startDate;
+    }
 
 
 
