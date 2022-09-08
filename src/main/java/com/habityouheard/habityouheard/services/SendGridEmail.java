@@ -19,7 +19,7 @@ public class SendGridEmail {
         Email from = new Email("liftoffproject88@gmail.com");
         Email to = new Email(email);
         String subject = "test";
-        Content content = new Content("text/plain","Have you done " + message);
+        Content content = new Content("text/html", message);
         Mail mail = new Mail(from, subject, to, content);
 
         SendGrid sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
