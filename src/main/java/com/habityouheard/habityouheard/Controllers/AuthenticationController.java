@@ -54,6 +54,7 @@ public class AuthenticationController {
         return new ResponseEntity<>(responseBody, HttpStatus.FORBIDDEN);
     }
 
+
     @PostMapping("get/user")
     public User getUserByToken(@RequestBody Map<String, String> json) {
         System.out.println(json.get("authToken"));

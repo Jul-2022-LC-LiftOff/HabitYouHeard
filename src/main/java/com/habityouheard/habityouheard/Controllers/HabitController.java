@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,8 +51,12 @@ public class HabitController {
     // add a habit
     @Transactional
     @PostMapping("create")
-    public ResponseEntity<String> createHabit(@RequestBody @Valid Habit newHabit, Errors errors) {
-        Optional<User> userReference = userRepository.findById(1);
+    public ResponseEntity<String> createHabit(@RequestBody @Valid Habit newHabit, @RequestHeader(value="Authorization") String authToken, Errors errors) {
+        System.out.println(authToken);
+        if (authToken == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        Optional<User> userReference = userRepository.findByAuthToken(authToken);
 
         if (errors.hasErrors()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -61,7 +66,6 @@ public class HabitController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        System.out.println(userReference);
         User user = (User) userReference.get();
         newHabit.setUser(user);
         Date date = Calendar.getInstance().getTime();
@@ -87,30 +91,6 @@ public class HabitController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    // affirm
-    @Transactional
-    @PostMapping("{id}/affirm")
-    public ResponseEntity<HabitMeta> affirmHabitToday(@PathVariable(value= "id") int id) {
-        Optional<HabitMeta> latestHabitMetaReference = habitMetaRepository.findTodaysByHabitId(id);
-
-
-        if (latestHabitMetaReference.isPresent()) {
-            HabitMeta habitMeta = (HabitMeta) latestHabitMetaReference.get();
-            habitMeta.setCompletedHabit(true);
-            entityManager.persist(habitMeta);
-            entityManager.flush();
-            return ResponseEntity.ok().body(habitMeta);
-        } else {
-            Optional<Habit> habitReference = habitRepository.findById(id);
-            Habit habit = (Habit) habitReference.get();
-            HabitMeta newHabitMeta = new HabitMeta(true, habit);
-            habit.getHabitMetaList().add(newHabitMeta);
-            entityManager.persist(habit);
-            entityManager.flush();
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        }
-    }
-    @Transactional
     @PostMapping("{id}/defirm")
     public ResponseEntity<HabitMeta> defirmHabitToday(@PathVariable(value= "id") int id) {
         Optional<HabitMeta> latestHabitMetaReference = habitMetaRepository.findTodaysByHabitId(id);
@@ -132,4 +112,5 @@ public class HabitController {
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
     }
+
 }
