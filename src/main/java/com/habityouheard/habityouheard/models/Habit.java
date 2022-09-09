@@ -31,6 +31,8 @@ public class Habit {
     @NotEmpty(message = "At least one day must be selected.")
     private List<String> selectedDays = new ArrayList<>();
 
+
+
     //Todo: add Group object
     //private Group group;
 
@@ -40,6 +42,8 @@ public class Habit {
     private List<HabitMeta> habitMetaList = new ArrayList<>();
 
     private int streak;
+
+    private Boolean activityStatus;
 
     private String startDate;
 
@@ -118,9 +122,15 @@ public class Habit {
         this.startDate = startDate;
     }
 
+    public Boolean getActivityStatus() {
+        return activityStatus;
+    }
 
+    public void setActivityStatus(Boolean activityStatus) {
+        this.activityStatus = activityStatus;
+    }
 
-    //TODO 1: add updatePointsMethods()
+//TODO 1: add updatePointsMethods()
     //TODO 2: add job(s)
 
 }
