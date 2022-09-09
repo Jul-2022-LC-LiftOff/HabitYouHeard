@@ -1,7 +1,9 @@
 package com.habityouheard.habityouheard.controllers;
 
 import com.habityouheard.habityouheard.models.Habit;
+import com.habityouheard.habityouheard.models.HabitMeta;
 import com.habityouheard.habityouheard.models.User;
+import com.habityouheard.habityouheard.repositories.HabitMetaRepository;
 import com.habityouheard.habityouheard.repositories.HabitRepository;
 import com.habityouheard.habityouheard.repositories.UserRepository;
 import com.habityouheard.habityouheard.services.SendGridEmail;
@@ -24,6 +26,9 @@ public class EmailController {
 
     @Autowired
     HabitRepository habitRepository;
+
+    @Autowired
+    HabitMetaRepository habitMetaRepository;
 
     @GetMapping("/send")
     public String sendEmail(@RequestBody Map<String, String> json) {
@@ -51,29 +56,31 @@ public class EmailController {
             String day = new SimpleDateFormat("EEEE", Locale.ENGLISH).format(date.getTime());
             for(Habit habit : user.getHabits()){
                 if(habit.getSelectedDays().contains(day)){
-                    if(emailList.containsKey(user)){
-                        emailList.get(user).add(habit);
+                    Optional<HabitMeta> latestHabitMetaReference = habitMetaRepository.findTodaysByHabitId(habit.getId());
+
+                    if(latestHabitMetaReference.isPresent()){
+                        HabitMeta habitMeta = (HabitMeta) latestHabitMetaReference.get();
+                        if(!habitMeta.isCompletedHabit()){
+                            continue;
+                        }
                     } else {
-                        emailList.put(user, new ArrayList<>());
-                        emailList.get(user).add(habit);
+                        if(emailList.containsKey(user)){
+                            emailList.get(user).add(habit);
+                        } else {
+                            emailList.put(user, new ArrayList<>());
+                            emailList.get(user).add(habit);
+                        }
                     }
                 }
             }
         }
 
         for(Map.Entry<User, List<Habit>> entry : emailList.entrySet()){
+            String text = "Greetings, " + entry.getKey().getUsername() + "\n" + " You have " + emailList.entrySet().size() + " habits to affirm.\n" + " \"<a clicktracking=\"off\" href=\"http://localhost:3000\"> Click Me To Go Affirm! </a>" + "\n";
 
 
-            String affirmationsAndDefirmations = "";
 
-
-            for(Habit habit : entry.getValue()){
-                affirmationsAndDefirmations += habit.getName() + "\n";
-                affirmationsAndDefirmations += "<a clicktracking=\"off\" href=\"http://localhost:8080/api/habit/"+ String.valueOf(habit.getId()) + "affirm/\"> Yes </a>" + "\n";
-                affirmationsAndDefirmations +=   "<a clicktracking=\"off\" href=\"http://localhost:8080/api/habit/"+ String.valueOf(habit.getId()) + "defirm/\"> No </a>" + "\n";
-            }
-
-            String message = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"></head><body>"+ affirmationsAndDefirmations + "</body></html>";
+            String message = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"></head><body>"+  text + "</body></html>";
 
             SendGridEmail.sendEmail(message,entry.getKey().getEmail());
 
