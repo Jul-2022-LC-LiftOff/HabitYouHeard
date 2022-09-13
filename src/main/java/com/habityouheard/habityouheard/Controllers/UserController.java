@@ -1,6 +1,8 @@
 package com.habityouheard.habityouheard.controllers;
 
+import com.habityouheard.habityouheard.models.Habit;
 import com.habityouheard.habityouheard.models.User;
+import com.habityouheard.habityouheard.repositories.HabitRepository;
 import com.habityouheard.habityouheard.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,7 +46,6 @@ public class UserController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
     }
 }
 

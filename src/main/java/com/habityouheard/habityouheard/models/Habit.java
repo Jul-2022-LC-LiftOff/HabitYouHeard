@@ -43,7 +43,7 @@ public class Habit {
 
     private int streak;
 
-    private Boolean activityStatus;
+    private Boolean isActive;
 
     private String startDate;
 
@@ -60,6 +60,7 @@ public class Habit {
         this.pointValue = pointValue;
         this.streak = streak;
         this.user = user;
+        this.isActive = true;
 
     }
 
@@ -122,12 +123,12 @@ public class Habit {
         this.startDate = startDate;
     }
 
-    public Boolean getActivityStatus() {
-        return activityStatus;
+    public Boolean getActive() {
+        return isActive;
     }
 
-    public void setActivityStatus(Boolean activityStatus) {
-        this.activityStatus = activityStatus;
+    public void setActive(Boolean active) {
+        isActive = active;
     }
 
 //TODO 1: add updatePointsMethods()

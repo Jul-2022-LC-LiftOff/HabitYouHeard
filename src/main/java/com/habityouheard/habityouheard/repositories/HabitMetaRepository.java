@@ -18,6 +18,6 @@ public interface HabitMetaRepository extends JpaRepository<HabitMeta,Integer> {
     @Query(value = "SELECT * FROM habit_meta where habit_id= ?1 ORDER BY `date_of_completion` DESC LIMIT 1;", nativeQuery = true)
     Optional<HabitMeta> findLatestByHabitId(@Param("habitId") int habitId);
 
-    @Query(value = "SELECT * FROM habit_meta where CURDATE() = DATE(`date_of_completion`) ORDER BY `date_of_completion` DESC LIMIT 1;", nativeQuery = true)
+    @Query(value = "SELECT * FROM habit_meta where CURDATE() = DATE(`date_of_completion`) AND habit_id= ?1 ORDER BY `date_of_completion` DESC LIMIT 1;", nativeQuery = true)
     Optional<HabitMeta> findTodaysByHabitId(@Param("habitId") int habitId);
 }
