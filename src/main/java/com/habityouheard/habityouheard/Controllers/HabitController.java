@@ -76,7 +76,7 @@ public class HabitController {
         entityManager.persist(user);
         entityManager.flush();
 
-        return new ResponseEntity<>("created", HttpStatus.CREATED);
+        return new ResponseEntity(newHabit, HttpStatus.CREATED);
     }
 
     // delete a habit
