@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -27,25 +28,63 @@ public class HabitsController {
     @Autowired
     HabitRepository habitRepository;
 
-    @GetMapping("{id}")
-    public ResponseEntity<List<Habit>> returnUserHabits(@PathVariable int id){
-        Optional <User> optUser = userRepository.findById(id);
-        if(optUser.isPresent()){
-            User user = (User) optUser.get();
+    @GetMapping("")
+    public ResponseEntity <List<Habit>> viewAllActiveHabits(@RequestHeader(value="Authorization") String authToken) {
+//        if (errors.hasErrors()) {
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); //, Errors errors
+//        }
+
+        if (authToken == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        Optional<User> userReference = userRepository.findByAuthToken(authToken);
+
+        if (!userReference.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        User user = (User) userReference.get();
+        List<Habit> activeHabits = habitRepository.findAllActiveHabits(user.getId());
+        return ResponseEntity.ok().body(activeHabits);
+
+    }
+
+    @GetMapping("all")
+    public ResponseEntity<List<Habit>> returnUserHabits(@RequestHeader(value="Authorization") String authToken, Errors errors){
+        if (errors.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if (authToken == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        Optional<User> userReference = userRepository.findByAuthToken(authToken);
+        if(userReference.isPresent()){
+            User user = (User) userReference.get();
             List<Habit> habits = user.getHabits();
             return ResponseEntity.ok().body(habits);
         }
         return ResponseEntity.ok().body(new ArrayList<>());
     }
-    @GetMapping("{id}/all")
-    public ResponseEntity<Habit> viewAllActiveHabits(@PathVariable int id) {
-        Optional optHabit = habitRepository.findById(id);
-        if (optHabit.isPresent()) {
-            Habit habit = (Habit) optHabit.get();
-            habitRepository.findAllActiveHabits(id);
-            return ResponseEntity.ok().body(habit);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+    @GetMapping("inactive")
+    public ResponseEntity <List<Habit>> viewAllInactiveHabits(@RequestHeader(value="Authorization") String authToken, Errors errors) {
+        if (errors.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
+        if (authToken == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        Optional<User> userReference = userRepository.findByAuthToken(authToken);
+
+        if (!userReference.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        User user = (User) userReference.get();
+        List<Habit> activeHabits = habitRepository.findAllInactiveHabits(user.getId());
+        return ResponseEntity.ok().body(activeHabits);
+
     }
 }

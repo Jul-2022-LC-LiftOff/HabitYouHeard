@@ -62,7 +62,7 @@ public class HabitController {
         }
 
         if (!userReference.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
         User user = (User) userReference.get();
@@ -71,6 +71,7 @@ public class HabitController {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         newHabit.setStartDate(dateFormat.format(date));
+        newHabit.setActive(true);
         user.getHabits().add(newHabit);
         entityManager.persist(user);
         entityManager.flush();
@@ -78,17 +79,6 @@ public class HabitController {
         return new ResponseEntity<>("created", HttpStatus.CREATED);
     }
 
-    // delete a habit
-//    @DeleteMapping("{id}/delete")
-//    public ResponseEntity<Long> deleteHabitById(@PathVariable(value= "id") int id) {
-//
-//        if (!habitRepository.existsById(id)) {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//
-//        habitRepository.deleteById(id);
-//        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//    }
     @PostMapping("{id}/stop")
     public ResponseEntity<Long> stopHabitById(@PathVariable(value= "id") int id) {
 
@@ -101,6 +91,41 @@ public class HabitController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @PostMapping("{id}/resume")
+    public ResponseEntity<Long> resumeHabitById(@PathVariable(value= "id") int id) {
+
+        if (!habitRepository.existsById(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // switch habit status to 0.
+        habitRepository.resumeHabit(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Transactional
+    @PostMapping("{id}/affirm")
+    public ResponseEntity<HabitMeta> affirmHabitToday(@PathVariable(value= "id") int id) {
+        Optional<HabitMeta> latestHabitMetaReference = habitMetaRepository.findTodaysByHabitId(id);
+
+
+        if (latestHabitMetaReference.isPresent()) {
+            HabitMeta habitMeta = (HabitMeta) latestHabitMetaReference.get();
+            habitMeta.setCompletedHabit(true);
+            entityManager.persist(habitMeta);
+            entityManager.flush();
+            return ResponseEntity.ok().body(habitMeta);
+        } else {
+            Optional<Habit> habitReference = habitRepository.findById(id);
+            Habit habit = (Habit) habitReference.get();
+            HabitMeta newHabitMeta = new HabitMeta(true, habit);
+            habit.getHabitMetaList().add(newHabitMeta);
+            entityManager.persist(habit);
+            entityManager.flush();
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }
+    }
+    @Transactional
     @PostMapping("{id}/defirm")
     public ResponseEntity<HabitMeta> defirmHabitToday(@PathVariable(value= "id") int id) {
         Optional<HabitMeta> latestHabitMetaReference = habitMetaRepository.findTodaysByHabitId(id);
