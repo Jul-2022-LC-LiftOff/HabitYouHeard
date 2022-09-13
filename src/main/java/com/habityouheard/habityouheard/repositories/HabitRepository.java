@@ -22,6 +22,15 @@ public interface HabitRepository extends JpaRepository<Habit, Integer> {
     @Modifying
     @Query(value = "UPDATE habit SET activity_status = 0 WHERE id = ?1", nativeQuery = true)
     void stopHabit(@Param("habitId") int id);
-    @Query(value = "SELECT * FROM habit WHERE activity_status=1", nativeQuery = true)
-    Optional<Habit> findAllActiveHabits();
+
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE habit SET activity_status = 1 WHERE id = ?1", nativeQuery = true)
+    void resumeHabit(@Param("habitId") int id);
+
+    @Query(value = "SELECT * FROM habit WHERE activity_status=1 AND user_id = ?1", nativeQuery = true)
+    Optional<Habit> findAllActiveHabits(@Param("userId") int userId);
+
+    @Query(value = "SELECT * FROM habit WHERE activity_status=0 AND user_id = ?1", nativeQuery = true)
+    Optional<Habit> findAllInactiveHabits(@Param("userId") int userId);
 }

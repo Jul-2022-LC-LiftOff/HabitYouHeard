@@ -52,7 +52,6 @@ public class HabitController {
     @Transactional
     @PostMapping("create")
     public ResponseEntity<String> createHabit(@RequestBody @Valid Habit newHabit, @RequestHeader(value="Authorization") String authToken, Errors errors) {
-        System.out.println(authToken);
         if (authToken == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
