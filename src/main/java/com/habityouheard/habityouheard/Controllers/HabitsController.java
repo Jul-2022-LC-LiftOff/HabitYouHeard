@@ -30,9 +30,6 @@ public class HabitsController {
 
     @GetMapping("")
     public ResponseEntity <List<Habit>> viewAllActiveHabits(@RequestHeader(value="Authorization") String authToken) {
-//        if (errors.hasErrors()) {
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); //, Errors errors
-//        }
 
         if (authToken == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -50,10 +47,7 @@ public class HabitsController {
     }
 
     @GetMapping("all")
-    public ResponseEntity<List<Habit>> returnUserHabits(@RequestHeader(value="Authorization") String authToken, Errors errors){
-        if (errors.hasErrors()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<List<Habit>> returnUserHabits(@RequestHeader(value="Authorization") String authToken){
 
         if (authToken == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -68,10 +62,7 @@ public class HabitsController {
     }
 
     @GetMapping("inactive")
-    public ResponseEntity <List<Habit>> viewAllInactiveHabits(@RequestHeader(value="Authorization") String authToken, Errors errors) {
-        if (errors.hasErrors()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity <List<Habit>> viewAllInactiveHabits(@RequestHeader(value="Authorization") String authToken) {
 
         if (authToken == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
