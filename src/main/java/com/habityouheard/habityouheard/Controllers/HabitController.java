@@ -80,14 +80,25 @@ public class HabitController {
     }
 
     // delete a habit
-    @DeleteMapping("{id}/delete")
-    public ResponseEntity<Long> deleteHabitById(@PathVariable(value= "id") int id) {
+//    @DeleteMapping("{id}/delete")
+//    public ResponseEntity<Long> deleteHabitById(@PathVariable(value= "id") int id) {
+//
+//        if (!habitRepository.existsById(id)) {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//
+//        habitRepository.deleteById(id);
+//        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//    }
+    @PostMapping("{id}/stop")
+    public ResponseEntity<Long> stopHabitById(@PathVariable(value= "id") int id) {
 
         if (!habitRepository.existsById(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        habitRepository.deleteById(id);
+        // switch habit status to 0.
+        habitRepository.stopHabit(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
