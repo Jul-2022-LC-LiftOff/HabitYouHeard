@@ -43,6 +43,9 @@ public class AuthenticationController {
                 user.setAuthToken(hashCode);
                 responseBody.put("token",hashCode);
                 responseBody.put("userId",String.valueOf(user.getId()));
+                responseBody.put("email" , user.getEmail());
+                responseBody.put("username", user.getUsername());
+
                 userRepository.save(user);
                 return new ResponseEntity<>(responseBody, HttpStatus.OK);
             }
