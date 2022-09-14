@@ -8,6 +8,7 @@ import com.habityouheard.habityouheard.repositories.HabitRepository;
 import com.habityouheard.habityouheard.repositories.UserRepository;
 import com.habityouheard.habityouheard.services.SendGridEmail;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
@@ -40,6 +41,7 @@ public class EmailController {
 
     }
 
+    @Scheduled(cron = "0 55 12 * * * ")
     @GetMapping("send/affirmOrDeny")
     public String sendAffirmOrDenyEmail(){
         //Custom query in UserRepository that gets all users with at least one habit that has a selectedDay matching today's date.
@@ -76,7 +78,7 @@ public class EmailController {
         }
 
         for(Map.Entry<User, List<Habit>> entry : emailList.entrySet()){
-            String text = "Greetings, " + entry.getKey().getUsername() + "\n" + " You have " + emailList.entrySet().size() + " habits to affirm.\n" + " \"<a clicktracking=\"off\" href=\"http://localhost:3000\"> Click Me To Go Affirm! </a>" + "\n";
+            String text = "Greetings, " + entry.getKey().getUsername() + "\n" + " You have " + entry.getValue().size() + " habits to affirm.\n" + " \"<a clicktracking=\"off\" href=\"http://localhost:3000\"> Click Me To Go Affirm! </a>" + "\n";
 
 
 
