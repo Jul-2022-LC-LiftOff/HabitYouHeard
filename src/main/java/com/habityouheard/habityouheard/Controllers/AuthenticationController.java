@@ -27,7 +27,7 @@ public class AuthenticationController {
     @Autowired
     UserRepository userRepository;
     @PostMapping ("assign/token")
-    public ResponseEntity<Object> provideTokenAndUserId(@RequestBody Map<String, String> json) {
+    public ResponseEntity<Object> provideUserData(@RequestBody Map<String, String> json) {
         Optional<User> optUser = userRepository.findByUsername(json.get("username"));
         Map<String,String> responseBody = new HashMap<>();
 
