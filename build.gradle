@@ -23,6 +23,8 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	runtimeOnly 'mysql:mysql-connector-java:8.0.29'
+	implementation 'com.sendgrid:sendgrid-java:4.9.3'
+
 }
 
 tasks.named('test') {

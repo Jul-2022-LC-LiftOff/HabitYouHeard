@@ -1,4 +1,4 @@
-package com.habityouheard.habityouheard.Controllers;
+package com.habityouheard.habityouheard.controllers;
 
 import com.habityouheard.habityouheard.models.Habit;
 import com.habityouheard.habityouheard.models.HabitMeta;

@@ -4,6 +4,7 @@ import com.habityouheard.habityouheard.models.Habit;
 import com.habityouheard.habityouheard.models.HabitMeta;
 import com.habityouheard.habityouheard.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,7 +19,7 @@ import java.util.Optional;
  */
 @Repository
 public interface HabitRepository extends JpaRepository<Habit, Integer> {
-
+  
     @Transactional
     @Modifying
     @Query(value = "UPDATE habit SET is_active = 0 WHERE id = ?1", nativeQuery = true)
