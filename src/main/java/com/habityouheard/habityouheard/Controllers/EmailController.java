@@ -41,7 +41,7 @@ public class EmailController {
 
     }
 
-    @Scheduled(cron = "0 55 12 * * * ")
+    @Scheduled(cron = "0 55 11 * * * ")
     @GetMapping("send/affirmOrDeny")
     public String sendAffirmOrDenyEmail(){
         //Custom query in UserRepository that gets all users with at least one habit that has a selectedDay matching today's date.
