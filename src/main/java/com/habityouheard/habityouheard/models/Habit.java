@@ -7,11 +7,10 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Entity
 public class Habit {
@@ -32,6 +31,8 @@ public class Habit {
     @NotEmpty(message = "At least one day must be selected.")
     private List<String> selectedDays = new ArrayList<>();
 
+
+
     //Todo: add Group object
     //private Group group;
 
@@ -41,6 +42,10 @@ public class Habit {
     private List<HabitMeta> habitMetaList = new ArrayList<>();
 
     private int streak;
+
+    private Boolean isActive;
+
+    private String startDate;
 
     @JsonIgnore
     @ManyToOne
@@ -55,6 +60,8 @@ public class Habit {
         this.pointValue = pointValue;
         this.streak = streak;
         this.user = user;
+        this.isActive = true;
+
     }
 
     public int getId() {
@@ -115,10 +122,19 @@ public class Habit {
         this.user = user;
     }
 
+    public void setStartDate(String startDate){
+        this.startDate = startDate;
+    }
 
+    public Boolean getActive() {
+        return isActive;
+    }
 
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
 
-    //TODO 1: add updatePointsMethods()
+//TODO 1: add updatePointsMethods()
     //TODO 2: add job(s)
 
 }

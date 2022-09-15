@@ -11,15 +11,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 ///api/Habit
 @CrossOrigin
@@ -50,42 +51,58 @@ public class HabitController {
     // add a habit
     @Transactional
     @PostMapping("create")
-    public ResponseEntity<String> createHabit(@RequestBody @Valid Habit newHabit, Errors errors) {
-        Optional<User> userReference = userRepository.findById(1);
+    public ResponseEntity<String> createHabit(@RequestBody @Valid Habit newHabit, @RequestHeader(value="Authorization") String authToken, Errors errors) {
+        if (authToken == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        Optional<User> userReference = userRepository.findByAuthToken(authToken);
 
         if (errors.hasErrors()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         if (!userReference.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        System.out.println(userReference);
         User user = (User) userReference.get();
         newHabit.setUser(user);
-        System.out.println(user);
+        Date date = Calendar.getInstance().getTime();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        newHabit.setStartDate(dateFormat.format(date));
+        newHabit.setActive(true);
         user.getHabits().add(newHabit);
         entityManager.persist(user);
         entityManager.flush();
 
-        return new ResponseEntity<>("created", HttpStatus.CREATED);
-        // TODO: will need to add some way to fill the pivot table
+        return new ResponseEntity(newHabit, HttpStatus.CREATED);
     }
 
-    // delete a habit
-    @DeleteMapping("{id}/delete")
-    public ResponseEntity<Long> deleteHabitById(@PathVariable(value= "id") int id) {
+    @PostMapping("{id}/stop")
+    public ResponseEntity<Long> stopHabitById(@PathVariable(value= "id") int id) {
 
         if (!habitRepository.existsById(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        habitRepository.deleteById(id);
+        // switch habit status to 0.
+        habitRepository.stopHabit(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    // affirm
+    @PostMapping("{id}/resume")
+    public ResponseEntity<Long> resumeHabitById(@PathVariable(value= "id") int id) {
+
+        if (!habitRepository.existsById(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // switch habit status to 0.
+        habitRepository.resumeHabit(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @Transactional
     @PostMapping("{id}/affirm")
     public ResponseEntity<HabitMeta> affirmHabitToday(@PathVariable(value= "id") int id) {
@@ -130,4 +147,5 @@ public class HabitController {
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
     }
+
 }
