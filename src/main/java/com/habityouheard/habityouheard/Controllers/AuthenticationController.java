@@ -24,7 +24,7 @@ public class AuthenticationController {
     @Autowired
     UserRepository userRepository;
     @PostMapping ("assign/token")
-    public ResponseEntity<Object> provideTokenAndUserId(@RequestBody Map<String, String> json) {
+    public ResponseEntity<Object> provideUserData(@RequestBody Map<String, String> json) {
         Optional<User> optUser = userRepository.findByUsername(json.get("username"));
         Map<String,String> responseBody = new HashMap<>();
 
@@ -40,6 +40,9 @@ public class AuthenticationController {
                 user.setAuthToken(hashCode);
                 responseBody.put("token",hashCode);
                 responseBody.put("userId",String.valueOf(user.getId()));
+                responseBody.put("email" , user.getEmail());
+                responseBody.put("username", user.getUsername());
+
                 userRepository.save(user);
                 return new ResponseEntity<>(responseBody, HttpStatus.OK);
             }
