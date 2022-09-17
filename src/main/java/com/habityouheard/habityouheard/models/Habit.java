@@ -14,7 +14,6 @@ import java.util.*;
 
 @Entity
 public class Habit {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -53,15 +52,14 @@ public class Habit {
 
     public Habit(){}
 
-    public Habit(String name, String description, List<String> selectedDays, int pointValue, int streak, User user) {
+    public Habit(String name, String description, List<String> selectedDays, int streak, User user) {
         this.name = name;
         this.description = description;
         this.selectedDays = selectedDays;
-        this.pointValue = pointValue;
+        this.pointValue = 0;
         this.streak = streak;
         this.user = user;
         this.isActive = true;
-
     }
 
     public int getId() {
