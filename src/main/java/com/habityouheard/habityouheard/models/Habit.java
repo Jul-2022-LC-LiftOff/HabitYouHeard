@@ -56,12 +56,11 @@ public class Habit {
         this.name = name;
         this.description = description;
         this.selectedDays = selectedDays;
-        this.pointValue = pointValue;
+        this.pointValue = 0;
         this.streak = streak;
         this.user = user;
         this.isActive = true;
         this.startDate = startDate;
-
     }
 
     public int getId() {
