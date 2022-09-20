@@ -1,4 +1,4 @@
-package com.habityouheard.habityouheard.controllers;
+package com.habityouheard.habityouheard.Controllers;
 
 import com.habityouheard.habityouheard.models.User;
 import com.habityouheard.habityouheard.repositories.UserRepository;
@@ -42,6 +42,7 @@ public class AuthenticationController {
                 responseBody.put("userId",String.valueOf(user.getId()));
                 responseBody.put("email" , user.getEmail());
                 responseBody.put("username", user.getUsername());
+                responseBody.put("points", String.valueOf(user.getPoints()));
 
                 userRepository.save(user);
                 return new ResponseEntity<>(responseBody, HttpStatus.OK);
