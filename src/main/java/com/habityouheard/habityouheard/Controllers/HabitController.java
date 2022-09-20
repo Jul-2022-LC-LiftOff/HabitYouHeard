@@ -1,4 +1,4 @@
-package com.habityouheard.habityouheard.controllers;
+package com.habityouheard.habityouheard.Controllers;
 
 import com.habityouheard.habityouheard.models.Habit;
 import com.habityouheard.habityouheard.models.HabitMeta;
@@ -112,6 +112,14 @@ public class HabitController {
         if (latestHabitMetaReference.isPresent()) {
             HabitMeta habitMeta = (HabitMeta) latestHabitMetaReference.get();
             habitMeta.setCompletedHabit(true);
+            Optional optHabit = habitRepository.findById(id);
+            if (optHabit.isPresent()) {
+                Habit habit = (Habit) optHabit.get();
+                int streakBonus = habit.getStreak() >= 7 ? 1 : 0;
+                int scoreAdd = habit.getPointValue() + 1 + streakBonus;
+                habit.setPointValue(scoreAdd);
+            }
+
             entityManager.persist(habitMeta);
             entityManager.flush();
             return ResponseEntity.ok().body(habitMeta);
