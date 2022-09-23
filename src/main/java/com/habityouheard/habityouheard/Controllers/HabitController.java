@@ -20,6 +20,8 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 ///api/Habit
@@ -105,55 +107,70 @@ public class HabitController {
 
     @Transactional
     @PostMapping("{id}/affirm")
-    public ResponseEntity<HabitMeta> affirmHabitToday(@PathVariable(value= "id") int id) {
+    public ResponseEntity affirmHabitToday(@PathVariable(value= "id") int id) {
+
+        Optional optHabit = habitRepository.findById(id);
+        if (!optHabit.isPresent()) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+        Habit habit = (Habit) optHabit.get();
+        LocalDateTime todaysDate = LocalDateTime.now();
+        DateTimeFormatter formattedTodaysDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         Optional<HabitMeta> latestHabitMetaReference = habitMetaRepository.findTodaysByHabitId(id);
 
-
-        if (latestHabitMetaReference.isPresent()) {
-            HabitMeta habitMeta = (HabitMeta) latestHabitMetaReference.get();
-            habitMeta.setCompletedHabit(true);
-            Optional optHabit = habitRepository.findById(id);
-            if (optHabit.isPresent()) {
-                Habit habit = (Habit) optHabit.get();
-                int streakBonus = habit.getStreak() >= 7 ? 1 : 0;
-                int scoreAdd = habit.getPointValue() + 1 + streakBonus;
-                habit.setPointValue(scoreAdd);
-            }
-
-            entityManager.persist(habitMeta);
-            entityManager.flush();
-            return ResponseEntity.ok().body(habitMeta);
-        } else {
-            Optional<Habit> habitReference = habitRepository.findById(id);
-            Habit habit = (Habit) habitReference.get();
-            HabitMeta newHabitMeta = new HabitMeta(true, habit);
-            habit.getHabitMetaList().add(newHabitMeta);
-            entityManager.persist(habit);
-            entityManager.flush();
-            return new ResponseEntity<>(HttpStatus.CREATED);
+        HabitMeta habitMeta = new HabitMeta(true, habit);
+        Boolean newHabitMeta = true;
+        if(latestHabitMetaReference.isPresent()) {
+            habitMeta = (HabitMeta) latestHabitMetaReference.get();
+            newHabitMeta = false;
         }
+
+        habitMeta.setCompletedHabit(true);
+
+
+        int streakBonus = habit.getStreak() >= 7 ? 1 : 0;
+        int scoreAdd = habit.getPointValue() + 1 + streakBonus;
+        habit.setPointValue(scoreAdd);
+        if(newHabitMeta) {
+            habit.getHabitMetaList().add(habitMeta);
+        }
+        entityManager.persist(habit);
+        entityManager.flush();
+        return new ResponseEntity(habit, HttpStatus.OK);
     }
+
     @Transactional
     @PostMapping("{id}/defirm")
-    public ResponseEntity<HabitMeta> defirmHabitToday(@PathVariable(value= "id") int id) {
+    public ResponseEntity defirmHabitToday(@PathVariable(value= "id") int id) {
+        Optional optHabit = habitRepository.findById(id);
+        if (!optHabit.isPresent()) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+        Habit habit = (Habit) optHabit.get();
+        LocalDateTime todaysDate = LocalDateTime.now();
+        DateTimeFormatter formattedTodaysDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         Optional<HabitMeta> latestHabitMetaReference = habitMetaRepository.findTodaysByHabitId(id);
 
-
-        if (latestHabitMetaReference.isPresent()) {
-            HabitMeta habitMeta = (HabitMeta) latestHabitMetaReference.get();
-            habitMeta.setCompletedHabit(false);
-            entityManager.persist(habitMeta);
-            entityManager.flush();
-            return ResponseEntity.ok().body(habitMeta);
-        } else {
-            Optional<Habit> habitReference = habitRepository.findById(id);
-            Habit habit = (Habit) habitReference.get();
-            HabitMeta newHabitMeta = new HabitMeta(false, habit);
-            habit.getHabitMetaList().add(newHabitMeta);
-            entityManager.persist(habit);
-            entityManager.flush();
-            return new ResponseEntity<>(HttpStatus.CREATED);
+        HabitMeta habitMeta = new HabitMeta(false, habit);
+        Boolean newHabitMeta = true;
+        if(latestHabitMetaReference.isPresent()) {
+            habitMeta = (HabitMeta) latestHabitMetaReference.get();
+            newHabitMeta = false;
         }
+
+        habitMeta.setCompletedHabit(false);
+
+//        int streakBonus = habit.getStreak() >= 7 ? 1 : 0;
+//        int scoreAdd = habit.getPointValue() + 1 + streakBonus;
+//        habit.setPointValue(scoreAdd);
+        if(newHabitMeta) {
+            habit.getHabitMetaList().add(habitMeta);
+        }
+        entityManager.persist(habit);
+        entityManager.flush();
+        return new ResponseEntity(habit, HttpStatus.OK);
     }
 
 }
