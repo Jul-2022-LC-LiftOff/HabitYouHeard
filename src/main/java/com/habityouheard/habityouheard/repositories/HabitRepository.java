@@ -19,7 +19,7 @@ import java.util.Optional;
  */
 @Repository
 public interface HabitRepository extends JpaRepository<Habit, Integer> {
-  
+
     @Transactional
     @Modifying
     @Query(value = "UPDATE habit SET is_active = 0 WHERE id = ?1", nativeQuery = true)
@@ -39,4 +39,15 @@ public interface HabitRepository extends JpaRepository<Habit, Integer> {
    @Transactional
    @Query(value = "SELECT h.id FROM habit AS h INNER JOIN habit_selected_days AS hs ON h.id = hs.habit_id INNER JOIN habit_meta AS hm ON h.id = hm.habit_id WHERE hs.selected_days LIKE DAYNAME(CURDATE()) AND NOT DATE(hm.date_of_completion) = DATE(CURDATE())", nativeQuery = true)
     List<Integer> findAllUnaffirmedScheduledHabitsForDay();
+
+    @Transactional
+    @Query(value = "SELECT h.id FROM habit AS h INNER JOIN habit_selected_days AS hs ON h.id = hs.habit_id WHERE hs.selected_days LIKE DAYNAME(CURDATE())", nativeQuery = true)
+    List<Integer> findAllScheduledHabitsForDay();
+
+
+
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE habit SET streak = 0 WHERE id = ?1", nativeQuery = true)
+    void resetStreakToZero(@Param("habitId") int id);
 }

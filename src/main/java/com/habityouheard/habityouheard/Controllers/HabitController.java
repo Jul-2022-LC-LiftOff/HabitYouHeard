@@ -86,7 +86,6 @@ public class HabitController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        // switch habit status to 0.
         habitRepository.stopHabit(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -100,7 +99,7 @@ public class HabitController {
 
         // switch habit status to 0.
         habitRepository.resumeHabit(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Transactional
