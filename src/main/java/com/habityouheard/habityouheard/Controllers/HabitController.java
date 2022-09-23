@@ -116,7 +116,7 @@ public class HabitController {
         Habit habit = (Habit) optHabit.get();
         LocalDateTime todaysDate = LocalDateTime.now();
         DateTimeFormatter formattedTodaysDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        Optional<HabitMeta> latestHabitMetaReference = habitMetaRepository.findTodaysByHabitId(id);
+        Optional<HabitMeta> latestHabitMetaReference = habitMetaRepository.findLatestDateByTodaysHabitId(id);
 
         HabitMeta habitMeta = new HabitMeta(true, habit);
         Boolean newHabitMeta = true;
@@ -150,7 +150,7 @@ public class HabitController {
         Habit habit = (Habit) optHabit.get();
         LocalDateTime todaysDate = LocalDateTime.now();
         DateTimeFormatter formattedTodaysDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        Optional<HabitMeta> latestHabitMetaReference = habitMetaRepository.findTodaysByHabitId(id);
+        Optional<HabitMeta> latestHabitMetaReference = habitMetaRepository.findLatestDateByTodaysHabitId(id);
 
         HabitMeta habitMeta = new HabitMeta(false, habit);
         Boolean newHabitMeta = true;

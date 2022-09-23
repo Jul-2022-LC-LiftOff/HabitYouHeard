@@ -58,7 +58,7 @@ public class EmailController {
             String day = new SimpleDateFormat("EEEE", Locale.ENGLISH).format(date.getTime());
             for(Habit habit : user.getHabits()){
                 if(habit.getSelectedDays().contains(day)){
-                    Optional<HabitMeta> latestHabitMetaReference = habitMetaRepository.findTodaysByHabitId(habit.getId());
+                    Optional<HabitMeta> latestHabitMetaReference = habitMetaRepository.findLatestDateByTodaysHabitId(habit.getId());
 
                     if(latestHabitMetaReference.isPresent()){
                         HabitMeta habitMeta = (HabitMeta) latestHabitMetaReference.get();
