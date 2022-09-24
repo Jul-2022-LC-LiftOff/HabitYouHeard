@@ -42,29 +42,16 @@ public interface HabitRepository extends JpaRepository<Habit, Integer> {
 
     @Transactional
     @Query(value = "SELECT h.id FROM habit AS h INNER JOIN habit_selected_days AS hs ON h.id = hs.habit_id WHERE hs.selected_days LIKE DAYNAME(CURDATE())", nativeQuery = true)
-    List<Integer> findAllScheduledHabitsForDay();
+    List<Integer> findAllScheduledHabitIDsForDay();
 
-    @Query(value = "SELECT h.id\n" +
-            "FROM habit AS h\n" +
-            "INNER JOIN habit_selected_days AS hs\n" +
-            "ON h.id = hs.habit_id\n" +
-            "INNER JOIN habit_meta AS hm\n" +
-            "ON h.id = hm.habit_id\n" +
-            "WHERE hs.selected_days LIKE DAYNAME(CURDATE()-1) \n" +
-            "AND DATE(hm.date_of_completion) <> DATE(CURDATE())\n" +
-            "AND h.is_active = 1;", nativeQuery = true)
-    List<Integer> findHabitIdsOfAllUnaffirmedActiveHabitsForYesterday();
+    @Transactional
+    @Query(value = "SELECT h.* FROM habit AS h INNER JOIN habit_selected_days AS hs ON h.id = hs.habit_id WHERE hs.selected_days LIKE DAYNAME(CURDATE())", nativeQuery = true)
+    List<Habit> findAllScheduledHabitsForDay();
+    @Transactional
+    @Query(value = "SELECT h.* FROM habit AS h INNER JOIN habit_selected_days AS hs ON h.id = hs.habit_id WHERE hs.selected_days LIKE DAYNAME(CURDATE()-1)", nativeQuery = true)
+    List<Habit> findAllScheduledHabitsForYesterday();
 
-    @Query(value = "SELECT h.*\n" +
-            "FROM habit AS h\n" +
-            "INNER JOIN habit_selected_days AS hs\n" +
-            "ON h.id = hs.habit_id\n" +
-            "INNER JOIN habit_meta AS hm\n" +
-            "ON h.id = hm.habit_id\n" +
-            "WHERE hs.selected_days LIKE DAYNAME(CURDATE()-1) \n" +
-            "AND DATE(hm.date_of_completion) <> DATE(CURDATE())\n" +
-            "AND h.is_active = 1;", nativeQuery = true)
-            List<Habit> findHabitsOfAllUnaffirmedActiveHabitsForYesterday();
+
     @Transactional
     @Modifying
     @Query(value = "UPDATE habit SET streak = 0 WHERE id = ?1", nativeQuery = true)

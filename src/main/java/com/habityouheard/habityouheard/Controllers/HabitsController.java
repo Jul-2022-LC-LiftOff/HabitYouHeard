@@ -90,79 +90,43 @@ public class HabitsController {
     }
 
 //    @Scheduled(cron = "0 27 13 * * * ")
+
+//    public void defirmRemainingHabitsForTheDay() {
+//        List<Habit> allHabits = habitRepository.findHabitsOfAllUnaffirmedActiveHabitsForYesterday();
+//        System.out.println(allHabits);
+//        for (int i = 0; i < allHabits.size(); i++) {
+//                HabitMeta newHabitMeta = new HabitMeta(false, allHabits.get(i));
+//            allHabits.get(i).getHabitMetaList().add(newHabitMeta);
+//                entityManager.persist(allHabits.get(i));
+//                entityManager.flush();
+//            }
+//        }
+//        @Scheduled(cron = "0 01 00 * * * ")
     @Transactional
-    @GetMapping("test")
+    @GetMapping("test") // remove after testing
     public void defirmRemainingHabitsForTheDay() {
-        List<Habit> allHabitIds = habitRepository.findHabitsOfAllUnaffirmedActiveHabitsForYesterday();
-        for (int i = 0; i < allHabitIds.size(); i++) {
-                HabitMeta newHabitMeta = new HabitMeta(false, habit);
-                habit.getHabitMetaList().add(newHabitMeta);
-                entityManager.persist(habit);
+        List<Habit> allHabits = habitRepository.findAllScheduledHabitsForDay();
+        Date date = Calendar.getInstance().getTime();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        for (int i = 0; i < allHabits.size(); i++) {
+            Optional<Date> latestDateReference = habitMetaRepository.findLatestDateByHabitId(allHabits.get(i).getId());
+            if (latestDateReference.isEmpty()) {
+                HabitMeta newHabitMeta = new HabitMeta(false, allHabits.get(i));
+                allHabits.get(i).getHabitMetaList().add(newHabitMeta);
+                entityManager.persist(allHabits.get(i));
+                entityManager.flush();
+            }
+
+            Date latestDate = (Date) latestDateReference.get();
+            String simpleLatestDate = dateFormat.format(latestDate);
+            String simpleDate = dateFormat.format(date);
+
+            if (!simpleLatestDate.equals(simpleDate)) {
+                HabitMeta newHabitMeta = new HabitMeta(false, allHabits.get(i));
+                allHabits.get(i).getHabitMetaList().add(newHabitMeta);
+                entityManager.persist(allHabits.get(i));
                 entityManager.flush();
             }
         }
-//        public void defirmRemainingHabitsForTheDay() {
-//            List<Integer> allHabitIds = habitRepository.findAllScheduledHabitsForDay();
-//            Date date = Calendar.getInstance().getTime();
-//            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//            for (int i = 0; i < allHabitIds.size(); i++) {
-//                Optional<Date> latestDateReference = habitMetaRepository.findLatestDateByHabitId(allHabitIds.get(i));
-//                Date latestDate = (Date) latestDateReference.get();
-//                String simpleLatestDate = dateFormat.format(latestDate);
-//                String simpleDate = dateFormat.format(date);
-//                System.out.println(simpleLatestDate);
-//                System.out.println(simpleDate);
-//                if (simpleLatestDate != simpleDate || !latestDateReference.isPresent()) {
-//                    Habit habit = habitRepository.getReferenceById(allHabitIds.get(i));
-//                    HabitMeta newHabitMeta = new HabitMeta(false, habit);
-//                    habit.getHabitMetaList().add(newHabitMeta);
-//                    entityManager.persist(habit);
-//                    entityManager.flush();
-//                }
-//            }
     }
-
-
-
-
-//        List<Integer> allHabitIds = habitRepository.findAllScheduledHabitsForDay();
-//        Date date = Calendar.getInstance().getTime();
-//        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//        for (int i = 0; i < allHabitIds.size(); i++) {
-//            Optional optHabit = habitRepository.findById(allHabitIds.get(i));
-//            if (optHabit.isPresent()) {
-//                Habit habit = (Habit) optHabit.get();
-//
-//                LocalDateTime todaysDate = LocalDateTime.now();
-//                DateTimeFormatter formattedTodaysDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-//
-//                Optional<HabitMeta> latestHabitMetaReference = habitMetaRepository.findLatestDateByTodaysHabitId(allHabitIds.get(i));
-//                if (latestHabitMetaReference.isPresent()) {
-//                   HabitMeta habitMeta = (HabitMeta) latestHabitMetaReference.get();
-//                    newHabitMeta = false;
-//                }
-//                habitMeta.setCompletedHabit(false);
-//                if (newHabitMeta) {
-//                    habit.getHabitMetaList().add(habitMeta);
-//                }
-//                entityManager.persist(habit);
-//                entityManager.flush();
-
-//                OTHER STUFF
-//            return new ResponseEntity(habit, HttpStatus.OK);
-
-//              Optional<HabitMeta> yesterdaysReference = habitMetaRepository.findTodaysByHabitId(allHabitIds.get(i));
-//              if (!yesterdaysReference.isPresent()) {
-//                  Optional <Habit> habitReference = habitRepository.findById(allHabitIds.get(i));
-//                  if (habitReference.isPresent()) {
-//                    Habit habit = habitReference.get();
-//                    HabitMeta newHabitMeta = new HabitMeta(false, habit);
-//                    habit.getHabitMetaList().add(newHabitMeta);
-//                    entityManager.persist(habit);
-//                    entityManager.flush();
-//                }
-//              }
-//            }
-//        }
-//    }
 }
