@@ -85,7 +85,7 @@ public class HabitsController {
         @Transactional
         @GetMapping("test") // remove after testing
 //        @Scheduled(cron = "0 10 00 * * * ")
-        public void defirmRemainingHabitsForYesterday() {
+        public List<HashMap> defirmRemainingHabitsForYesterday() {
             List<Habit> allHabits = habitRepository.findAllScheduledHabitsForDay();
             HashMap<Integer, List<Integer>> affirmScores = new HashMap<Integer, List<Integer>>();
             HashMap<Integer, List<Integer>> defirmScores = new HashMap<Integer, List<Integer>>();
@@ -108,7 +108,11 @@ public class HabitsController {
 
                 defirmScores.put(allHabits.get(i).getId(), defirmedData);
 
-
             }
+            List<HashMap> scoresForToday = new ArrayList<HashMap>();
+            scoresForToday.add(affirmScores);
+            scoresForToday.add(defirmScores);
+            return scoresForToday;
+
         }
 }
