@@ -8,12 +8,15 @@ import com.habityouheard.habityouheard.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,6 +79,36 @@ public class HabitsController {
         User user = (User) userReference.get();
         List<Habit> activeHabits = habitRepository.findAllInactiveHabits(user.getId());
         return ResponseEntity.ok().body(activeHabits);
-
     }
+
+
+        @Transactional
+        @GetMapping("test") // remove after testing
+//        @Scheduled(cron = "0 10 00 * * * ")
+        public void defirmRemainingHabitsForYesterday() {
+            List<Habit> allHabits = habitRepository.findAllScheduledHabitsForDay();
+            HashMap<Integer, List<Integer>> affirmScores = new HashMap<Integer, List<Integer>>();
+            HashMap<Integer, List<Integer>> defirmScores = new HashMap<Integer, List<Integer>>();
+
+            for (int i = 0; i < allHabits.size(); i++) {
+                Integer currentPoints= allHabits.get(i).getPointValue();
+                Integer currentStreak = allHabits.get(i).getStreak();
+                int streakBonus = allHabits.get(i).getStreak() >= 7 ? 1 : 0;
+                Integer affirmedPoints = currentPoints + 11111 + streakBonus;
+                Integer affirmedStreak = currentStreak + 1;
+                List<Integer> affirmedData = new ArrayList<>();
+                affirmedData.add(affirmedPoints, affirmedStreak);
+
+                affirmScores.put(allHabits.get(i).getId(), affirmedData);
+
+                Integer defirmedPoints = currentPoints - 1;
+                Integer defirmedStreak = 0;
+                List<Integer> defirmedData = new ArrayList<>();
+                affirmedData.add(defirmedPoints, defirmedStreak);
+
+                defirmScores.put(allHabits.get(i).getId(), defirmedData);
+
+
+            }
+        }
 }

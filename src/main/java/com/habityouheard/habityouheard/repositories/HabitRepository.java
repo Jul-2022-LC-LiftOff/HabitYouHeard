@@ -35,4 +35,8 @@ public interface HabitRepository extends JpaRepository<Habit, Integer> {
 
     @Query(value = "SELECT * FROM habit WHERE is_active=0 AND user_id = ?1", nativeQuery = true)
     List<Habit> findAllInactiveHabits(@Param("userId") int userId);
+    @Transactional
+    @Query(value = "SELECT h.* FROM habit AS h INNER JOIN habit_selected_days AS hs ON h.id = hs.habit_id WHERE hs.selected_days LIKE DAYNAME(CURDATE())", nativeQuery = true)
+    List<Habit> findAllScheduledHabitsForDay();
+
 }
