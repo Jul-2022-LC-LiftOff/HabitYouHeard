@@ -90,12 +90,8 @@ public class HabitsController {
 
     }
 
-//    @Scheduled(cron = "0 27 13 * * * ")
-
-
-//        @Scheduled(cron = "0 01 00 * * * ")
+    @Scheduled(cron = "0 01 00 * * * ")
     @Transactional
-    @GetMapping("test") // remove after testing
     public void defirmRemainingHabitsForYesterday() {
         List<Habit> allHabits = habitRepository.findAllScheduledHabitsForYesterday();
         final Calendar cal = Calendar.getInstance();
@@ -116,8 +112,6 @@ public class HabitsController {
                 Date latestDate = (Date) latestDateReference.get();
                 String simpleLatestDate = dateFormat.format(latestDate);
                 String simpleDate = dateFormat.format(date);
-                System.out.println(simpleLatestDate);
-                System.out.println(simpleDate);
                 if (!simpleLatestDate.equals(simpleDate)) {
                     HabitMeta newHabitMeta = new HabitMeta(false, allHabits.get(i));
                     allHabits.get(i).getHabitMetaList().add(newHabitMeta);
