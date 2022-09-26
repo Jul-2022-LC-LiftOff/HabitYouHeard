@@ -85,7 +85,7 @@ public class HabitsController {
         @Transactional
         @GetMapping("test") // remove after testing
 //        @Scheduled(cron = "0 10 00 * * * ")
-        public List<HashMap> defirmRemainingHabitsForYesterday() {
+        public List<HashMap> setUpScoresForToday() {
             List<Habit> allHabits = habitRepository.findAllScheduledHabitsForDay();
             HashMap<Integer, List<Integer>> affirmScores = new HashMap<Integer, List<Integer>>();
             HashMap<Integer, List<Integer>> defirmScores = new HashMap<Integer, List<Integer>>();
@@ -94,7 +94,7 @@ public class HabitsController {
                 Integer currentPoints= allHabits.get(i).getPointValue();
                 Integer currentStreak = allHabits.get(i).getStreak();
                 int streakBonus = allHabits.get(i).getStreak() >= 7 ? 1 : 0;
-                Integer affirmedPoints = currentPoints + 11111 + streakBonus;
+                Integer affirmedPoints = currentPoints + 1 + streakBonus;
                 Integer affirmedStreak = currentStreak + 1;
                 List<Integer> affirmedData = new ArrayList<>();
                 affirmedData.add(affirmedPoints, affirmedStreak);
