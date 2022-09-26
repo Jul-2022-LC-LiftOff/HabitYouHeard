@@ -127,10 +127,11 @@ public class HabitController {
 
         habitMeta.setCompletedHabit(true);
 
-
+        habit.updateStreak(true);
         int streakBonus = habit.getStreak() >= 7 ? 1 : 0;
-        int scoreAdd = habit.getPointValue() + 1 + streakBonus;
+        int scoreAdd = habit.getLastPointValue() + 1 + streakBonus;
         habit.setPointValue(scoreAdd);
+
         if(newHabitMeta) {
             habit.getHabitMetaList().add(habitMeta);
         }
@@ -161,9 +162,10 @@ public class HabitController {
 
         habitMeta.setCompletedHabit(false);
 
-//        int streakBonus = habit.getStreak() >= 7 ? 1 : 0;
-//        int scoreAdd = habit.getPointValue() + 1 + streakBonus;
-//        habit.setPointValue(scoreAdd);
+        habit.updateStreak(false);
+        int habitPoints = habit.getLastPointValue();
+        habit.setPointValue(habitPoints > 0 ? habitPoints - 1 : 0);
+
         if(newHabitMeta) {
             habit.getHabitMetaList().add(habitMeta);
         }

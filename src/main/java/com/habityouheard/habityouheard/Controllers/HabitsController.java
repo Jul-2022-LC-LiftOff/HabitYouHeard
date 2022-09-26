@@ -90,7 +90,8 @@ public class HabitsController {
 
     }
 
-    @Scheduled(cron = "0 01 00 * * * ")
+    //@Scheduled(cron = "0 01 00 * * * ")
+    @GetMapping("test")
     @Transactional
     public void defirmRemainingHabitsForYesterday() {
         List<Habit> allHabits = habitRepository.findAllScheduledHabitsForYesterday();
@@ -107,8 +108,9 @@ public class HabitsController {
                 entityManager.flush();
                 newHabitMeta.setDateOfCompletion(date);
                 habitRepository.resetStreakToZero(allHabits.get(i).getId());
+                int habitPoints = allHabits.get(i).getLastPointValue();
+                allHabits.get(i).setPointValue(habitPoints > 0 ? habitPoints - 1 : 0);
             } else {
-
                 Date latestDate = (Date) latestDateReference.get();
                 String simpleLatestDate = dateFormat.format(latestDate);
                 String simpleDate = dateFormat.format(date);
@@ -119,8 +121,12 @@ public class HabitsController {
                     entityManager.flush();
                     newHabitMeta.setDateOfCompletion(date);
                     habitRepository.resetStreakToZero(allHabits.get(i).getId());
+                    int habitPoints = allHabits.get(i).getLastPointValue();
+                    allHabits.get(i).setPointValue(habitPoints > 0 ? habitPoints - 1 : 0);
                 }
             }
+            allHabits.get(i).setLastPointValue(allHabits.get(i).getPointValue());
+            allHabits.get(i).setLastStreak(allHabits.get(i).getStreak());
         }
     }
 }

@@ -37,10 +37,14 @@ public class Habit {
 
     private int pointValue;
 
+    private int lastPointValue;
+
     @OneToMany(mappedBy = "habit", targetEntity=HabitMeta.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<HabitMeta> habitMetaList = new ArrayList<>();
 
     private int streak;
+
+    private int lastStreak;
 
     private Boolean isActive;
 
@@ -52,7 +56,7 @@ public class Habit {
 
     public Habit(){}
 
-    public Habit(String name, String description, List<String> selectedDays, int pointValue, int streak, User user, String startDate) {
+    public Habit(String name, String description, List<String> selectedDays, int pointValue, int streak, User user, String startDate, int lastStreak, int lastPointValue) {
         this.name = name;
         this.description = description;
         this.selectedDays = selectedDays;
@@ -61,6 +65,8 @@ public class Habit {
         this.user = user;
         this.isActive = true;
         this.startDate = startDate;
+        this.lastPointValue = lastPointValue;
+        this.lastStreak = lastStreak;
     }
 
     public int getId() {
@@ -99,6 +105,14 @@ public class Habit {
         this.pointValue = pointValue;
     }
 
+    public int getLastPointValue() {
+        return lastPointValue;
+    }
+
+    public void setLastPointValue(int lastPointValue) {
+        this.lastPointValue = lastPointValue;
+    }
+
     public List<HabitMeta> getHabitMetaList() {
         return habitMetaList;
     }
@@ -108,7 +122,13 @@ public class Habit {
     }
 
     public void updateStreak(boolean completedHabit) {
-        streak = (completedHabit) ? streak++ : 0;
+        streak = completedHabit ? lastStreak + 1 : 0;
+    }
+
+    public int getlastStreak() { return lastStreak; }
+
+    public void setLastStreak(int lastStreak) {
+        this.lastStreak = lastStreak;
     }
 
     //create new habitMeta method (upend habitMeta list up top)
