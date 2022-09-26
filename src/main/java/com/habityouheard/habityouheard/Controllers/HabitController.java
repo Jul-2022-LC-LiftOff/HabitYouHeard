@@ -88,7 +88,6 @@ public class HabitController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        // switch habit status to 0.
         habitRepository.stopHabit(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -102,7 +101,7 @@ public class HabitController {
 
         // switch habit status to 0.
         habitRepository.resumeHabit(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Transactional
@@ -117,7 +116,7 @@ public class HabitController {
         Habit habit = (Habit) optHabit.get();
         LocalDateTime todaysDate = LocalDateTime.now();
         DateTimeFormatter formattedTodaysDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        Optional<HabitMeta> latestHabitMetaReference = habitMetaRepository.findTodaysByHabitId(id);
+        Optional<HabitMeta> latestHabitMetaReference = habitMetaRepository.findLatestDateByTodaysHabitId(id);
 
         HabitMeta habitMeta = new HabitMeta(true, habit);
         Boolean newHabitMeta = true;
@@ -151,7 +150,7 @@ public class HabitController {
         Habit habit = (Habit) optHabit.get();
         LocalDateTime todaysDate = LocalDateTime.now();
         DateTimeFormatter formattedTodaysDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        Optional<HabitMeta> latestHabitMetaReference = habitMetaRepository.findTodaysByHabitId(id);
+        Optional<HabitMeta> latestHabitMetaReference = habitMetaRepository.findLatestDateByTodaysHabitId(id);
 
         HabitMeta habitMeta = new HabitMeta(false, habit);
         Boolean newHabitMeta = true;
